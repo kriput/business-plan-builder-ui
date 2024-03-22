@@ -1,19 +1,48 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import "jquery";
+import "popper.js";
+
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./site.css";
+import Root from "./routes/Root";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import ErrorPage from "./routes/ErrorPage";
+import FinancialForecastContainer from "./forecast/container/FinancialForecastContainer";
+import FinancialForecastForm from "./forecast/components/FinancialForecastForm";
+import FinancialForecastOverview from "./forecast/components/FinancialForecastOverview";
+import Home from "./base_components/Home";
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Root />,
+    errorElement: <ErrorPage />,
+    children: [
+      {
+        path: "/",
+        element: <Home/>
+      },
+      {
+        path: "forecasts/",
+        element: <FinancialForecastOverview />,
+      },
+      {
+        path: "forecasts/add/",
+        element: <FinancialForecastForm />,
+      },
+      {
+        path: "forecasts/:id",
+        element: <FinancialForecastContainer />,
+      },
+    ],
+  },
+]);
 
 const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
+  document.getElementById("root") as HTMLElement,
 );
 root.render(
   <React.StrictMode>
-    <App />
-  </React.StrictMode>
+    <RouterProvider router={router} />
+  </React.StrictMode>,
 );
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
