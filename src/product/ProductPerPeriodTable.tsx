@@ -1,19 +1,25 @@
-import {Button, Row, Table, TableProps, Tag} from "antd";
-import {ProductPerPeriod} from "../domain/ProductPerPeriod";
-import {getPercents, getPrice} from "../forecast/container/FinancialForecastContainer";
+import { Button, Row, Table, TableProps, Tag } from "antd";
+import {
+  getPercents,
+  getPrice,
+} from "../forecast/container/FinancialForecastContainer";
+import { useState } from "react";
+import ProductPerPeriodForm from "./ProductPerPeriodForm";
+import { Product } from "../domain/Product";
 
 interface Props {
-  productsPerPeriod: ProductPerPeriod[] | undefined
+  product: Product | undefined;
+  fetchForecast: Function;
 }
 
 interface ProductPerPeriodTableDto {
-  key: number
-  quantity: number,
-  forExport: number,
-  price: number,
-  costPerItem: number,
-  year: number,
-  yearTurnOver: number
+  key: number;
+  quantity: number;
+  forExport: number;
+  price: number;
+  costPerItem: number;
+  year: number;
+  yearTurnOver: number;
 }
 
 const columns: TableProps["columns"] = [
@@ -21,8 +27,12 @@ const columns: TableProps["columns"] = [
     title: "Aasta",
     dataIndex: "year",
     key: "year",
-    render: value => value ? <Tag color='blue'>{value}</Tag> :
-        <Tag color='red'>Palun lisage järgmise aasta andmed</Tag>
+    render: (value) =>
+      value ? (
+        <Tag color="blue">{value}</Tag>
+      ) : (
+        <Tag color="red">Palun lisage järgmise aasta andmed</Tag>
+      ),
   },
   {
     title: "Kogus kokku",
@@ -30,54 +40,76 @@ const columns: TableProps["columns"] = [
     key: "quantity",
   },
   {
+    title: "Keskm.ühiku müügihind KM-ta",
+    dataIndex: "price",
+    key: "price",
+    render: (value) => getPrice(value),
+  },
+  {
+    title: "Materjali / kauba kulu ühikule",
+    dataIndex: "costPerItem",
+    key: "costPerItem",
+    render: (value) => getPrice(value),
+  },
+  {
+    title: <b>AASTA KÄIVE KOKKU</b>,
+    dataIndex: "yearTurnOver",
+    key: "yearTurnOver",
+    render: (value) => (
+      <b>
+        <Tag color="green">{getPrice(value)}</Tag>
+      </b>
+    ),
+  },
+  {
     title: "Tooteid ekspordiks %",
     dataIndex: "forExport",
     key: "forExport",
-    render: value => getPercents(value)
+    render: (value) => getPercents(value),
   },
-  {
-    title: 'Keskm.ühiku müügihind KM-ta',
-    dataIndex: 'price',
-    key: 'price',
-    render: value => getPrice(value)
-  },
-  {
-    title: 'Materjali/kauba kulu ühikule',
-    dataIndex: 'costPerItem',
-    key: 'costPerItem',
-    render: value => getPrice(value)
-  },
-  {
-    title: <Tag color='green'>AASTA KÄIVE KOKKU</Tag>,
-    dataIndex: 'yearTurnOver',
-    key: 'yearTurnOver',
-    render: value => <b><Tag color='green'>{getPrice(value)}</Tag></b>
-  }
 ];
 
 const ProductPerPeriodTable = (props: Props) => {
-  const countYearTurnOver = (soldQuantity: number, costPerItem: number) => soldQuantity * costPerItem;
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const countYearTurnOver = (soldQuantity: number, costPerItem: number) =>
+    soldQuantity * costPerItem;
 
-  const dataSource = props.productsPerPeriod?.map(productPerPeriod => {
-    const productPerPeriodDto = productPerPeriod as ProductPerPeriodTableDto;
-    productPerPeriodDto.key = productPerPeriod.year;
-    productPerPeriodDto.yearTurnOver = countYearTurnOver(productPerPeriod.costPerItem, productPerPeriod.quantity)
-    return productPerPeriodDto
-  })
+  const dataSource = props.product?.productsPerPeriod?.map(
+    (productPerPeriod) => {
+      const productPerPeriodDto = productPerPeriod as ProductPerPeriodTableDto;
+      productPerPeriodDto.key = productPerPeriod.year;
+      productPerPeriodDto.yearTurnOver = countYearTurnOver(
+        productPerPeriod.costPerItem,
+        productPerPeriod.quantity,
+      );
+      return productPerPeriodDto;
+    },
+  );
 
   return (
-      <>
-        <Table
-            pagination={false}
-            size="small"
-            columns={columns}
-            dataSource={dataSource}
+    <>
+      <Table
+        pagination={false}
+        size="small"
+        columns={columns}
+        dataSource={dataSource}
+      />
+      <br />
+      {isFormOpen && (
+        <ProductPerPeriodForm
+          setIsFormOpen={setIsFormOpen}
+          product={props.product}
+          fetchForecast={props.fetchForecast}
         />
-        <br/>
+      )}
+      {!isFormOpen && (
         <Row>
-          <Button type='dashed'>Lisa järgmise aasta andmed</Button>
+          <Button type="dashed" onClick={() => setIsFormOpen(true)}>
+            Lisa järgmise aasta andmed
+          </Button>
         </Row>
-      </>
+      )}
+    </>
   );
 };
 

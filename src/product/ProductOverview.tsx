@@ -53,7 +53,8 @@ const ProductOverview = (props: Props) => {
         ),
         children: (
           <ProductPerPeriodTable
-            productsPerPeriod={product.productsPerPeriod}
+            fetchForecast={props.fetchForecast}
+            product={product}
           />
         ),
       };

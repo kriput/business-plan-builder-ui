@@ -6,7 +6,7 @@ export class FinancialForecastService extends BaseEntityService<FinancialForecas
     super("forecasts");
   }
 
-  async getTrip(id: string): Promise<FinancialForecast | undefined> {
+  async getForecastById(id: string): Promise<FinancialForecast | undefined> {
     try {
       const response = await this.axios.get<FinancialForecast>(
         id,

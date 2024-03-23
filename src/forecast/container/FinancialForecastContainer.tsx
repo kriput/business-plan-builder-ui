@@ -20,7 +20,7 @@ const FinancialForecastContainer = () => {
 
   const getForecastById = useQuery({
     queryKey:['loadFinancialForecastById'],
-    queryFn: async () => await financialForecastService.getTrip(id ?? ''),
+    queryFn: async () => await financialForecastService.getForecastById(id ?? ''),
     retry: 0
   });
 
