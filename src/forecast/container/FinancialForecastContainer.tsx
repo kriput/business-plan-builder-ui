@@ -9,6 +9,10 @@ export const getPercents = (num: number) => {
   return `${num * 100} %`
 }
 
+export const getPrice = (price: number) => {
+  return `${price} €`
+}
+
 const FinancialForecastContainer = () => {
 
   const financialForecastService = new FinancialForecastService();

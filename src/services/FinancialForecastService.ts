@@ -12,6 +12,7 @@ export class FinancialForecastService extends BaseEntityService<FinancialForecas
         id,
       );
       if (response.status === 200) {
+        console.log(response)
         return response.data;
       }
 

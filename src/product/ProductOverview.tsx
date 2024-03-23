@@ -1,9 +1,18 @@
 import { FinancialForecast } from "../domain/FinancialForecast";
-import { Badge, Button, Col, Collapse, Divider, Empty, Row } from "antd";
-import { Product } from "../domain/Product";
+import {
+  Badge,
+  Button,
+  Col,
+  Collapse,
+  CollapseProps,
+  Divider,
+  Empty,
+  Row,
+} from "antd";
 import { getPercents } from "../forecast/container/FinancialForecastContainer";
 import { useEffect, useState } from "react";
 import ProductForm from "./ProductForm";
+import ProductPerPeriodTable from "./ProductPerPeriodTable";
 
 interface Props {
   financialForecast: FinancialForecast | undefined;
@@ -13,10 +22,44 @@ interface Props {
 const ProductOverview = (props: Props) => {
   const [isFormOpen, setIsFormOpen] = useState(false);
 
-  useEffect(
-      () => setIsFormOpen(false),
-      [props.financialForecast]
-  )
+  const items: CollapseProps["items"] = props.financialForecast?.products
+    ?.reverse()
+    .map((product) => {
+      return {
+        key: product.id,
+        label: (
+          <>
+            <Row justify="space-between">
+              <Col>
+                <b>{product.name}</b>
+              </Col>
+              <Col>
+                <Badge
+                  color="green"
+                  count={"Käibemaks: " + getPercents(product.tax)}
+                />
+              </Col>
+              <Col>
+                <Badge
+                  color="orange"
+                  count={
+                    "Keskmine laovaru vajadus: " +
+                    getPercents(product.stockReserveRate)
+                  }
+                />
+              </Col>
+            </Row>
+          </>
+        ),
+        children: (
+          <ProductPerPeriodTable
+            productsPerPeriod={product.productsPerPeriod}
+          />
+        ),
+      };
+    }) as CollapseProps["items"];
+
+  useEffect(() => setIsFormOpen(false), [props.financialForecast]);
 
   return (
     <>
@@ -34,14 +77,17 @@ const ProductOverview = (props: Props) => {
       )}
       {isFormOpen && (
         <>
-          <Row justify='center'>
+          <Row justify="center">
             <Button danger onClick={() => setIsFormOpen(false)}>
               Tagasi
             </Button>
           </Row>
-          <br/>
-          <Row justify='center'>
-            <ProductForm fetchForecast={props.fetchForecast} id={props.financialForecast?.id}/>
+          <br />
+          <Row justify="center">
+            <ProductForm
+              fetchForecast={props.fetchForecast}
+              id={props.financialForecast?.id}
+            />
           </Row>
         </>
       )}
@@ -59,41 +105,10 @@ const ProductOverview = (props: Props) => {
         </>
       )}
 
-      <Collapse>
-        {props.financialForecast?.products?.length !== 0 &&
-          props.financialForecast?.products?.map((product: Product, index) => (
-            <Collapse.Panel
-              key={index}
-              header={
-                <Row justify="space-between">
-                  <Col>
-                    <b>{product.name}</b>
-                  </Col>
-                  <Col>
-                    <Badge
-                      color="green"
-                      count={"Käibemaks: " + getPercents(product.tax)}
-                    />
-                  </Col>
-                  <Col>
-                    <Badge
-                      color="orange"
-                      count={
-                        "Keskmine laovaru vajadus: " +
-                        getPercents(product.stockReserveRate)
-                      }
-                    />
-                  </Col>
-                </Row>
-              }
-            >
-              {product.unit}
-            </Collapse.Panel>
-          ))
-          .sort().reverse()}
-      </Collapse>
+        {props.financialForecast?.products?.length !== 0 && (
+            <Collapse items={items}/>
+        )}
     </>
   );
 };
-
 export default ProductOverview;
