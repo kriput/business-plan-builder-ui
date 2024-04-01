@@ -1,8 +1,8 @@
-import { FinancialForecast } from "../../domain/FinancialForecast";
+import { FinancialForecast } from "../../../domain/FinancialForecast";
 import { Button, Col, Divider, Empty, List, Row, Skeleton } from "antd";
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
-import { FinancialForecastService } from "../../services/FinancialForecastService";
-import ErrorResult from "../../base_components/ErrorResult";
+import { FinancialForecastService } from "../../../services/FinancialForecastService";
+import ErrorResult from "../../../base_components/ErrorResult";
 import { FieldTimeOutlined, FileTextOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 

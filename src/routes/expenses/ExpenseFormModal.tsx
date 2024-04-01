@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { Expense } from "../domain/Expense";
-import { ExpenseType, expenseTypeMapping } from "../enums/ExpenseType";
+import { Expense } from "../../domain/Expense";
+import { ExpenseType, expenseTypeMapping } from "../../enums/ExpenseType";
 import {Alert, Button, Form, Modal, Select, Tag} from "antd";
 import { useForm } from "antd/es/form/Form";
 import { useMutation } from "@tanstack/react-query";
-import { ExpenseService } from "../services/ExpenseService";
-import ErrorResult from "../base_components/ErrorResult";
-import { FinancialForecast } from "../domain/FinancialForecast";
+import { ExpenseService } from "../../services/ExpenseService";
+import ErrorResult from "../../base_components/ErrorResult";
+import { FinancialForecast } from "../../domain/FinancialForecast";
 import {getExpenseTypeEnumName} from "./ExpensesContainer";
 
 interface Props {

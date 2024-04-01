@@ -1,10 +1,10 @@
 import { useMutation, UseMutationResult } from "@tanstack/react-query";
-import { FinancialForecastService } from "../../services/FinancialForecastService";
-import { FinancialForecast } from "../../domain/FinancialForecast";
+import { FinancialForecastService } from "../../../services/FinancialForecastService";
+import { FinancialForecast } from "../../../domain/FinancialForecast";
 import { Button, Col, Divider, Form, Input, Modal, Row } from "antd";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import ErrorResult from "../../base_components/ErrorResult";
+import ErrorResult from "../../../base_components/ErrorResult";
 import { CheckCircleOutlined } from "@ant-design/icons";
 
 const FinancialForecastForm = () => {

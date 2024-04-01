@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Button, Form, Input, Modal } from "antd";
-import { Product } from "../domain/Product";
+import { Product } from "../../domain/Product";
 import { useMutation, UseMutationResult } from "@tanstack/react-query";
-import { ProductService } from "../services/ProductService";
-import ErrorResult from "../base_components/ErrorResult";
+import { ProductService } from "../../services/ProductService";
+import ErrorResult from "../../base_components/ErrorResult";
 
 interface Props {
   id: number | undefined;

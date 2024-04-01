@@ -1,10 +1,10 @@
-import {InputNumber, message, Popconfirm, Table, TableProps, Tag} from "antd";
-import { Expense } from "../domain/Expense";
+import { InputNumber, message, Popconfirm, Table, TableProps, Tag } from "antd";
+import { Expense } from "../../domain/Expense";
 import { useState } from "react";
-import { ExpenseType } from "../enums/ExpenseType";
-import { ExpensePerPeriod } from "../domain/ExpensePerPeriod";
+import { ExpenseType } from "../../enums/ExpenseType";
+import { ExpensePerPeriod } from "../../domain/ExpensePerPeriod";
 import { getExpenseTypeEnumName } from "./ExpensesContainer";
-import { ExpenseService } from "../services/ExpenseService";
+import { ExpenseService } from "../../services/ExpenseService";
 import { useMutation } from "@tanstack/react-query";
 import { getPrice } from "../forecast/container/FinancialForecastContainer";
 
@@ -39,7 +39,7 @@ const ExpenseTypeTable = (props: Props) => {
   };
 
   const onSubmit = (year: number, type: ExpenseType, sum: number) => {
-    const updatedExpenses = [...props.expenses];
+    const updatedExpenses = [...expenses];
     const expenseWithProvidedType = updatedExpenses.find(
       (exp) => exp.type === type,
     );
@@ -109,7 +109,7 @@ const ExpenseTypeTable = (props: Props) => {
         rowKey="id"
         size="small"
         pagination={false}
-        dataSource={props.expenses}
+        dataSource={expenses}
         columns={getColumns()}
       ></Table>
     </>

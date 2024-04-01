@@ -5,7 +5,7 @@ import {
 } from "../forecast/container/FinancialForecastContainer";
 import { useState } from "react";
 import ProductPerPeriodForm from "./ProductPerPeriodForm";
-import { Product } from "../domain/Product";
+import { Product } from "../../domain/Product";
 
 interface Props {
   product: Product | undefined;

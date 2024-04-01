@@ -1,6 +1,6 @@
 import { Col, Row, Tabs, TabsProps } from "antd";
 import ProductOverview from "../../product/ProductOverview";
-import { FinancialForecastService } from "../../services/FinancialForecastService";
+import { FinancialForecastService } from "../../../services/FinancialForecastService";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import {

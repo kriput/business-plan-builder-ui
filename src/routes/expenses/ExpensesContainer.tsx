@@ -9,15 +9,15 @@ import {
   Switch,
   Tag,
 } from "antd";
-import { FinancialForecast } from "../domain/FinancialForecast";
-import { Product } from "../domain/Product";
+import { FinancialForecast } from "../../domain/FinancialForecast";
+import { Product } from "../../domain/Product";
 import ButtonGroup from "antd/es/button/button-group";
-import { ExpenseType } from "../enums/ExpenseType";
+import { ExpenseType } from "../../enums/ExpenseType";
 import { EXPENSE_CATEGORY_LIST } from "./ExpenseCategoryListCreator";
 import { useState } from "react";
 import ExpenseTypeTable from "./ExpenseTypeTable";
-import { Expense } from "../domain/Expense";
-import { ExpenseCategory } from "../dto/ExpenseCategory";
+import { Expense } from "../../domain/Expense";
+import { ExpenseCategory } from "../../dto/ExpenseCategory";
 import ExpenseFormModal from "./ExpenseFormModal";
 import { CalendarOutlined } from "@ant-design/icons";
 
@@ -45,7 +45,7 @@ const ExpensesContainer = (props: Props) => {
   const [latestYear, setLatestYear] = useState(
     getLatestYear(props.financialForecast?.products ?? []),
   );
-  const [expenses, setExpenses] = useState(props.financialForecast?.expenses);
+  const [, setExpenses] = useState(props.financialForecast?.expenses);
 
   const onSwitchChange = (checked: boolean) => setShowEmpty(checked);
 

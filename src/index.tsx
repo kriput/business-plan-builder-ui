@@ -7,9 +7,9 @@ import "./site.css";
 import Root from "./routes/Root";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import ErrorPage from "./routes/ErrorPage";
-import FinancialForecastContainer from "./forecast/container/FinancialForecastContainer";
-import FinancialForecastForm from "./forecast/components/FinancialForecastForm";
-import FinancialForecastOverview from "./forecast/components/FinancialForecastOverview";
+import FinancialForecastContainer from "./routes/forecast/container/FinancialForecastContainer";
+import FinancialForecastForm from "./routes/forecast/components/FinancialForecastForm";
+import FinancialForecastOverview from "./routes/forecast/components/FinancialForecastOverview";
 import Home from "./base_components/Home";
 
 const router = createBrowserRouter([

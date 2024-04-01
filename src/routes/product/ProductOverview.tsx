@@ -1,4 +1,4 @@
-import { FinancialForecast } from "../domain/FinancialForecast";
+import { FinancialForecast } from "../../domain/FinancialForecast";
 import {
   Badge,
   Button,

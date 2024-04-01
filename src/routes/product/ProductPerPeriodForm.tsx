@@ -1,10 +1,10 @@
-import ErrorResult from "../base_components/ErrorResult";
+import ErrorResult from "../../base_components/ErrorResult";
 import { Button, Form, Input, Row } from "antd";
 import React, { useState } from "react";
 import { useMutation, UseMutationResult } from "@tanstack/react-query";
-import { Product } from "../domain/Product";
-import { ProductService } from "../services/ProductService";
-import { ProductPerPeriod } from "../domain/ProductPerPeriod";
+import { Product } from "../../domain/Product";
+import { ProductService } from "../../services/ProductService";
+import { ProductPerPeriod } from "../../domain/ProductPerPeriod";
 
 interface Props {
   fetchForecast: Function;

@@ -1,5 +1,5 @@
-import { ExpenseCategory } from "../dto/ExpenseCategory";
-import { ExpenseType } from "../enums/ExpenseType";
+import { ExpenseCategory } from "../../dto/ExpenseCategory";
+import { ExpenseType } from "../../enums/ExpenseType";
 
 export const EXPENSE_CATEGORY_LIST: ExpenseCategory[] = [
   {
