@@ -1,6 +1,4 @@
-import {BaseEntity} from "./BaseEntity";
-
-export interface ProductPerPeriod extends BaseEntity {
+export interface ProductPerPeriod {
   quantity: number,
   forExport: number,
   price: number,

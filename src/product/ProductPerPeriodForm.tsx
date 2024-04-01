@@ -16,14 +16,14 @@ const getNextYearToInsert = (
   productsPerPeriod: ProductPerPeriod[] | undefined,
 ): number | undefined => {
   if (!productsPerPeriod || productsPerPeriod.length === 0) {
-    return 2024;
+    return new Date().getFullYear();
   }
   const lastInsertedYear =
     productsPerPeriod
       .map((productPerPeriod) => productPerPeriod.year)
       .sort()
       .reverse()
-      .at(0) ?? 2024;
+      .at(0) ?? new Date().getFullYear();
   return lastInsertedYear + 1;
 };
 

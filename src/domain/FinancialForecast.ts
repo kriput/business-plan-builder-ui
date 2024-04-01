@@ -1,10 +1,12 @@
-import {BaseEntity} from "./BaseEntity";
-import {Product} from "./Product";
+import { BaseEntity } from "./BaseEntity";
+import { Product } from "./Product";
+import { Expense } from "./Expense";
 
-export interface FinancialForecast extends BaseEntity{
-  name: string,
-  sellingInCreditRate?: number,
-  buildingDeprecationRate?: number,
-  equipmentDeprecationRate?: number,
-  products?: Product[]
+export interface FinancialForecast extends BaseEntity {
+  name: string;
+  sellingInCreditRate?: number;
+  buildingDeprecationRate?: number;
+  equipmentDeprecationRate?: number;
+  products?: Product[];
+  expenses?: Expense[];
 }
