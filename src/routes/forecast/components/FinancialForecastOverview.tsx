@@ -72,7 +72,7 @@ const FinancialForecastOverview = () => {
                         </h3>
                       }
                       title={
-                      <Link target="_blank" to={`/forecasts/${forecast.id}`}>
+                      <Link to={`/forecasts/${forecast.id}`}>
                         <h3>{forecast.name}</h3>
                       </Link>}
                       description={
@@ -92,7 +92,7 @@ const FinancialForecastOverview = () => {
                         </>
                       }
                     />
-                    <Link target="_blank" to={`/forecasts/${forecast.id}`}>Ava prognoos</Link>
+                    <Link to={`/forecasts/${forecast.id}`}>Ava prognoos</Link>
                   </List.Item>
                 )}
               />
