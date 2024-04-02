@@ -10,7 +10,6 @@ import {
   Tag,
 } from "antd";
 import { FinancialForecast } from "../../domain/FinancialForecast";
-import { Product } from "../../domain/Product";
 import ButtonGroup from "antd/es/button/button-group";
 import { ExpenseType } from "../../enums/ExpenseType";
 import { EXPENSE_CATEGORY_LIST } from "./ExpenseCategoryListCreator";
@@ -20,6 +19,7 @@ import { Expense } from "../../domain/Expense";
 import { ExpenseCategory } from "../../dto/ExpenseCategory";
 import ExpenseFormModal from "./ExpenseFormModal";
 import { CalendarOutlined } from "@ant-design/icons";
+import { getLatestYear } from "../forecast/container/FinancialForecastContainer";
 
 interface Props {
   financialForecast: FinancialForecast | undefined;
@@ -28,16 +28,6 @@ interface Props {
 
 export const getExpenseTypeEnumName = (name: string) =>
   ExpenseType[name as keyof typeof ExpenseType];
-
-const getLatestYear = (products: Product[]) => {
-  return products.reduce((prev, next) => {
-    const maxYearFromProduct = next.productsPerPeriod.reduce(
-      (a, b) => Math.max(a, b.year),
-      new Date().getFullYear(),
-    );
-    return Math.max(prev, maxYearFromProduct);
-  }, new Date().getFullYear());
-};
 
 const ExpensesContainer = (props: Props) => {
   const [openPanels, setOpenPanels] = useState([] as string[] | string);

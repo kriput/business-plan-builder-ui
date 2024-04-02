@@ -13,6 +13,7 @@ import { getPercents } from "../forecast/container/FinancialForecastContainer";
 import { useEffect, useState } from "react";
 import ProductForm from "./ProductForm";
 import ProductPerPeriodTable from "./ProductPerPeriodTable";
+import ProductOverview from "./ProductOverview";
 
 interface Props {
   financialForecast: FinancialForecast | undefined;
@@ -41,9 +42,9 @@ const ProductContainer = (props: Props) => {
               </Col>
               <Col>
                 <Badge
-                  color="orange"
+                  color="purple"
                   count={
-                    "Keskmine laovaru vajadus: " +
+                    "Materjali/kauba keskmine laovaru vajadus: " +
                     getPercents(product.stockReserveRate)
                   }
                 />
@@ -67,6 +68,13 @@ const ProductContainer = (props: Props) => {
       <Row justify="center">
         <h2>Toodete ülevaade</h2>
       </Row>
+      <Row justify="center">
+        <ProductOverview products={props.financialForecast?.products ?? []}/>
+      </Row>
+      <Divider />
+
+      <br/>
+      <br/>
       <Row justify="center">
         <Col>
           <h2>
@@ -96,7 +104,6 @@ const ProductContainer = (props: Props) => {
         </>
       )}
 
-      <Divider dashed />
 
       {props.financialForecast?.products?.length === 0 && (
         <>
@@ -110,7 +117,9 @@ const ProductContainer = (props: Props) => {
       )}
 
         {props.financialForecast?.products?.length !== 0 && (
-            <Collapse items={items}/>
+            <Row justify="center" style={{marginTop: "2rem"}}>
+              <Col span={20}><Collapse items={items}/></Col>
+            </Row>
         )}
     </>
   );

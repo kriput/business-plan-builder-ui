@@ -87,7 +87,7 @@ const ProductPerPeriodForm = (props: Props) => {
             {getNextYearToInsert(props.product?.productsPerPeriod)}:
           </h4>
           <Form name="add_product_per_period" form={form} layout="inline">
-            <Form.Item label="Kogus" name="quantity">
+            <Form.Item label={<div>Müüdud <b>kogus</b></div>} name="quantity">
               <Input
                 style={{ width: "8rem", marginBottom: "1rem" }}
                 onChange={(e) => handleChange(e.target)}
@@ -143,7 +143,7 @@ const ProductPerPeriodForm = (props: Props) => {
               ]}
             >
               <Input
-                style={{ width: "8rem", marginBottom: '1rem'  }}
+                style={{ width: "8rem", marginBottom: "1rem" }}
                 onChange={(e) => handleRateInput(e.target)}
                 name="forExport"
                 placeholder="0"

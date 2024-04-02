@@ -3,7 +3,7 @@ import {
   getPercents,
   getPrice,
 } from "../forecast/container/FinancialForecastContainer";
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import ProductPerPeriodForm from "./ProductPerPeriodForm";
 import { Product } from "../../domain/Product";
 
@@ -28,16 +28,21 @@ const columns: TableProps["columns"] = [
     dataIndex: "year",
     key: "year",
     render: (value) =>
-      value ? (
-        <Tag color="blue">{value}</Tag>
-      ) : (
-        <Tag color="red">Palun lisage järgmise aasta andmed</Tag>
-      ),
+        value ? (
+            <Tag color="blue">{value}</Tag>
+        ) : (
+            <Tag color="red">Palun lisage järgmise aasta andmed</Tag>
+        ),
   },
   {
-    title: "Kogus kokku",
-    dataIndex: "quantity",
-    key: "quantity",
+    title: <b>AASTA KÄIVE KOKKU</b>,
+    dataIndex: "yearTurnOver",
+    key: "yearTurnOver",
+    render: (value) => (
+        <b>
+          <Tag color="green">{getPrice(value)}</Tag>
+        </b>
+    ),
   },
   {
     title: "Keskm.ühiku müügihind KM-ta",
@@ -52,14 +57,9 @@ const columns: TableProps["columns"] = [
     render: (value) => getPrice(value),
   },
   {
-    title: <b>AASTA KÄIVE KOKKU</b>,
-    dataIndex: "yearTurnOver",
-    key: "yearTurnOver",
-    render: (value) => (
-      <b>
-        <Tag color="green">{getPrice(value)}</Tag>
-      </b>
-    ),
+    title: "Kogus kokku",
+    dataIndex: "quantity",
+    key: "quantity",
   },
   {
     title: "Tooteid ekspordiks %",
@@ -71,6 +71,7 @@ const columns: TableProps["columns"] = [
 
 const ProductPerPeriodTable = (props: Props) => {
   const [isFormOpen, setIsFormOpen] = useState(false);
+  useEffect(() => window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'}), [isFormOpen])
   const countYearTurnOver = (soldQuantity: number, costPerItem: number) =>
     soldQuantity * costPerItem;
 
@@ -104,7 +105,12 @@ const ProductPerPeriodTable = (props: Props) => {
       )}
       {!isFormOpen && (
         <Row>
-          <Button type="dashed" onClick={() => setIsFormOpen(true)}>
+          <Button
+            type="dashed"
+            onClick={() => {
+              setIsFormOpen(true);
+            }}
+          >
             Lisa järgmise aasta andmed
           </Button>
         </Row>
