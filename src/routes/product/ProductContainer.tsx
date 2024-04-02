@@ -19,7 +19,7 @@ interface Props {
   fetchForecast: Function;
 }
 
-const ProductOverview = (props: Props) => {
+const ProductContainer = (props: Props) => {
   const [isFormOpen, setIsFormOpen] = useState(false);
 
   const items: CollapseProps["items"] = props.financialForecast?.products
@@ -64,6 +64,9 @@ const ProductOverview = (props: Props) => {
 
   return (
     <>
+      <Row justify="center">
+        <h2>Toodete ülevaade</h2>
+      </Row>
       <Row justify="center">
         <Col>
           <h2>
@@ -112,4 +115,4 @@ const ProductOverview = (props: Props) => {
     </>
   );
 };
-export default ProductOverview;
+export default ProductContainer;
