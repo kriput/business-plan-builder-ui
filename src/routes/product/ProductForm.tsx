@@ -94,7 +94,7 @@ const ProductForm = (props: Props) => {
             />
           </Form.Item>
           <Form.Item
-            label="Laovaru vajadus %"
+            label="Materjali / kauba laovaru vajadus %"
             name="stockReserveRate"
             rules={[
               {
