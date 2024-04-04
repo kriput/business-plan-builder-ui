@@ -1,6 +1,6 @@
 import { BaseEntity } from "./BaseEntity";
 import { Product } from "./Product";
-import { Expense } from "./Expense";
+import { FinancialOperation } from "./FinancialOperation";
 
 export interface FinancialForecast extends BaseEntity {
   name: string;
@@ -8,5 +8,5 @@ export interface FinancialForecast extends BaseEntity {
   buildingDeprecationRate?: number;
   equipmentDeprecationRate?: number;
   products?: Product[];
-  expenses?: Expense[];
+  expenses?: FinancialOperation[];
 }
