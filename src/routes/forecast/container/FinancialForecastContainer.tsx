@@ -39,30 +39,30 @@ export const getLatestYear = (products: Product[]) => {
 };
 
 export const countVATForPeriod = (
-    totalForPeriod: TotalPerPeriod[],
-    year: number,
+  totalForPeriod: TotalPerPeriod[],
+  year: number,
 ) => {
   return (
-      totalForPeriod
+    totalForPeriod
       .filter((totalPerPeriod) => totalPerPeriod.year === year)
       .reduce((sum, currentValue) => sum + currentValue.sum, 0) * VAT
   );
 };
 
 export const countTotalForAllOperationsPerPeriod = (
-    totalsPerPeriod: TotalPerPeriod[],
-    year: number,
+  totalsPerPeriod: TotalPerPeriod[],
+  year: number,
 ) => {
   return (
-      totalsPerPeriod
+    totalsPerPeriod
       .filter((totalPerPeriod) => totalPerPeriod.year === year)
       .reduce((sum, currentValue) => sum + currentValue.sum, 0) +
-      countVATForPeriod(totalsPerPeriod, year)
+    countVATForPeriod(totalsPerPeriod, year)
   );
 };
 
 export const getTotalsPerPeriod = (financialOperations: FinancialOperation[]) =>
-    financialOperations.map((exp) => exp.totalsPerPeriod).flat() ?? [];
+  financialOperations.map((exp) => exp.totalsPerPeriod).flat() ?? [];
 
 const FinancialForecastContainer = () => {
   const financialForecastService = new FinancialForecastService();
@@ -92,7 +92,12 @@ const FinancialForecastContainer = () => {
           <RiseOutlined /> Raha sissetulek
         </span>
       ),
-      children: <IncomeContainer forecastId={getForecastById.data?.id ?? 0} />,
+      children: (
+        <IncomeContainer
+          latestYear={getLatestYear(getForecastById.data?.products ?? [])}
+          forecastId={getForecastById.data?.id ?? 0}
+        />
+      ),
     },
     {
       key: "3",
