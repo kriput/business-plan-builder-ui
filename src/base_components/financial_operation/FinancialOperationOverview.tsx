@@ -17,12 +17,7 @@ import { FinancialOperation } from "../../domain/FinancialOperation";
 import { FinancialOperationCategory } from "../../dto/FinancialOperationCategory";
 import FinancialOperationFormModal from "./FinancialOperationFormModal";
 import { CalendarOutlined } from "@ant-design/icons";
-import SimpleTotalPerPeriodTable from "./SimpleTotalPerPeriodTable";
-import {
-  countVATForPeriod,
-  getTotalsPerPeriod,
-} from "../../routes/forecast/container/FinancialForecastContainer";
-import {FinancialOperationType} from "../../enums/FinancialOperationType";
+import { FinancialOperationType } from "../../enums/FinancialOperationType";
 
 interface Props {
   forecastId: number;
@@ -178,21 +173,6 @@ const FinancialOperationOverview = (props: Props) => {
                 activeKey={openPanels}
                 items={items}
               />
-            </Col>
-          </Row>
-          <Row>
-            <Col span={20}>
-              <Tag style={{ width: "100%" }} color="red">
-                <h3>Operatsioonidelt makstav käibemaks: </h3>
-                <SimpleTotalPerPeriodTable
-                  addFirstBlank={true}
-                  latestYear={latestYear}
-                  totalsPerPeriod={
-                    getTotalsPerPeriod(props.financialOperations)
-                  }
-                  dataProcessor={countVATForPeriod}
-                />
-              </Tag>
             </Col>
           </Row>
         </>

@@ -1,9 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { FinancialOperationService } from "../../services/FinancialOperationService";
-import { Col, Divider, Row, Skeleton } from "antd";
+import { Col, Divider, Row, Skeleton, Tag } from "antd";
 import SimpleTotalPerPeriodTable from "../../base_components/financial_operation/SimpleTotalPerPeriodTable";
 import {
   countTotalForAllOperationsPerPeriod,
+  countVATForPeriod,
   getTotalsPerPeriod,
 } from "../forecast/container/FinancialForecastContainer";
 import FinancialOperationOverview from "../../base_components/financial_operation/FinancialOperationOverview";
@@ -50,14 +51,31 @@ const ExpenseContainer = (props: Props) => {
       </Row>
       <Divider />
       {getExpenses.isSuccess && (
-        <FinancialOperationOverview
-          financialOperationType={FinancialOperationType.EXPENSE}
-          forecastId={props.forecastId}
-          latestYear={props.latestYear}
-          financialOperations={expenses}
-          financialOperationCategoryList={EXPENSE_CATEGORY_LIST}
-          title="Majandustegevuse käigus tekkivad kulud"
-        />
+        <>
+          <FinancialOperationOverview
+            financialOperationType={FinancialOperationType.EXPENSE}
+            forecastId={props.forecastId}
+            latestYear={props.latestYear}
+            financialOperations={expenses}
+            financialOperationCategoryList={EXPENSE_CATEGORY_LIST}
+            title="Majandustegevuse käigus tekkivad kulud"
+          />
+          <Row>
+            <Col span={20}>
+              <Tag style={{ width: "100%" }} color="red">
+                <h3>Operatsioonidelt makstav käibemaks: </h3>
+                <SimpleTotalPerPeriodTable
+                  addFirstBlank={true}
+                  latestYear={props.latestYear}
+                  totalsPerPeriod={getTotalsPerPeriod(
+                    expenses,
+                  )}
+                  dataProcessor={countVATForPeriod}
+                />
+              </Tag>
+            </Col>
+          </Row>
+        </>
       )}
       {getExpenses.isError && (
         <ErrorResult
