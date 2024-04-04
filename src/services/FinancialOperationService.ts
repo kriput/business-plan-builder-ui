@@ -23,4 +23,22 @@ export class FinancialOperationService extends BaseEntityService<FinancialOperat
       throw Error(e.message);
     }
   }
+
+  async getIncomesForForecast(
+      id: string,
+  ): Promise<FinancialOperation[] | undefined> {
+    try {
+      const response = await this.axios.get<FinancialOperation[]>(
+          `${id}/incomes`,
+      );
+      if (response.status === 200) {
+        console.log(response);
+        return response.data;
+      }
+
+      return undefined;
+    } catch (e: any) {
+      throw Error(e.message);
+    }
+  }
 }

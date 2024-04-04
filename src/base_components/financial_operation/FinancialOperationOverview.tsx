@@ -183,7 +183,7 @@ const FinancialOperationOverview = (props: Props) => {
           <Row>
             <Col span={20}>
               <Tag style={{ width: "100%" }} color="red">
-                <h3>Kuludelt makstav käibemaks: </h3>
+                <h3>Operatsioonidelt makstav käibemaks: </h3>
                 <SimpleTotalPerPeriodTable
                   addFirstBlank={true}
                   latestYear={latestYear}
