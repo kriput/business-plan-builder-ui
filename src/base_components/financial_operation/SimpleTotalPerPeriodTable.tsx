@@ -33,6 +33,7 @@ const SimpleTotalPerPeriodTable = (props: Props) => {
       columns={getColumns()}
       size="small"
       dataSource={[""]}
+      rowKey={Math.random}
       pagination={false}
     />
   );

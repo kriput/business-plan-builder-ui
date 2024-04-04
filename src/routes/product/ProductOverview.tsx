@@ -93,7 +93,7 @@ const ProductOverview = (props: Props) => {
   }
 
   return (
-      <Table dataSource={getData()} columns={columns} pagination={false}/>
+      <Table dataSource={getData()} columns={columns} pagination={false} rowKey={"period"}/>
   );
 };
 
