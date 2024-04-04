@@ -12,6 +12,8 @@ import FinancialForecastForm from "./routes/forecast/components/FinancialForecas
 import FinancialForecastOverview from "./routes/forecast/components/FinancialForecastOverview";
 import Home from "./base_components/Home";
 
+export const VAT: number = 0.22;
+
 const router = createBrowserRouter([
   {
     path: "/",
