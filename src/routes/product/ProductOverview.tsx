@@ -21,7 +21,7 @@ interface PeriodData {
   averagePrice: number
 }
 
-const getTotalSold = (productsForPeriod: ProductPerPeriod[]) => productsForPeriod.reduce((accumulator, currentValue) => accumulator + currentValue.price * currentValue.quantity, 0)
+export const getTotalSold = (productsForPeriod: ProductPerPeriod[]) => productsForPeriod.reduce((accumulator, currentValue) => accumulator + currentValue.price * currentValue.quantity, 0)
 
 const getTotalForExportInEuro = (productsForPeriod: ProductPerPeriod[]) => productsForPeriod.reduce((accumulator, currentValue) => accumulator + currentValue.price * currentValue.quantity * currentValue.forExport, 0)
 
@@ -88,7 +88,6 @@ const ProductOverview = (props: Props) => {
         averagePrice: soldUnits === 0 ? 0 : roundNumberToTwoDecimalPlaces(totalSoldForPeriod / soldUnits)
       })
     }
-    console.log("here", data)
 
     return data;
   }

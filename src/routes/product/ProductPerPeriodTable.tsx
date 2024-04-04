@@ -9,7 +9,6 @@ import { Product } from "../../domain/Product";
 
 interface Props {
   product: Product | undefined;
-  fetchForecast: Function;
 }
 
 interface ProductPerPeriodTableDto {
@@ -100,7 +99,6 @@ const ProductPerPeriodTable = (props: Props) => {
         <ProductPerPeriodForm
           setIsFormOpen={setIsFormOpen}
           product={props.product}
-          fetchForecast={props.fetchForecast}
         />
       )}
       {!isFormOpen && (
