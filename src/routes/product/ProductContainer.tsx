@@ -17,7 +17,6 @@ import ProductOverview from "./ProductOverview";
 
 interface Props {
   financialForecast: FinancialForecast | undefined;
-  fetchForecast: Function;
 }
 
 const ProductContainer = (props: Props) => {
@@ -54,7 +53,6 @@ const ProductContainer = (props: Props) => {
         ),
         children: (
           <ProductPerPeriodTable
-            fetchForecast={props.fetchForecast}
             product={product}
           />
         ),
@@ -97,7 +95,6 @@ const ProductContainer = (props: Props) => {
           <br />
           <Row justify="center">
             <ProductForm
-              fetchForecast={props.fetchForecast}
               id={props.financialForecast?.id}
             />
           </Row>

@@ -1,13 +1,13 @@
 import ErrorResult from "../../base_components/ErrorResult";
 import { Button, Form, Input, Row } from "antd";
 import React, { useState } from "react";
-import { useMutation, UseMutationResult } from "@tanstack/react-query";
+import {useMutation, UseMutationResult, useQueryClient} from "@tanstack/react-query";
 import { Product } from "../../domain/Product";
 import { ProductService } from "../../services/ProductService";
 import { ProductPerPeriod } from "../../domain/ProductPerPeriod";
 
+
 interface Props {
-  fetchForecast: Function;
   product: Product | undefined;
   setIsFormOpen: Function;
 }
@@ -30,6 +30,7 @@ const getNextYearToInsert = (
 const ProductPerPeriodForm = (props: Props) => {
   const [form] = Form.useForm();
   const productService = new ProductService();
+  const queryClient = useQueryClient();
   const [input, setInput] = useState({
     quantity: 0,
     forExport: 0,
@@ -66,8 +67,8 @@ const ProductPerPeriodForm = (props: Props) => {
       }
       return await productService.add(product, "/add");
     },
-    onSuccess: () => {
-      props.fetchForecast();
+    onSuccess: async () => {
+      await queryClient.refetchQueries({queryKey: ["loadFinancialForecastById"]});
     },
   });
 

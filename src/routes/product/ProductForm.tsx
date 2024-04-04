@@ -1,19 +1,19 @@
 import React, { useState } from "react";
 import { Button, Form, Input, Modal } from "antd";
 import { Product } from "../../domain/Product";
-import { useMutation, UseMutationResult } from "@tanstack/react-query";
+import {useMutation, UseMutationResult, useQueryClient} from "@tanstack/react-query";
 import { ProductService } from "../../services/ProductService";
 import ErrorResult from "../../base_components/ErrorResult";
 
 interface Props {
   id: number | undefined;
-  fetchForecast: Function;
 }
 
 const ProductForm = (props: Props) => {
   const productService = new ProductService();
   const [form] = Form.useForm();
   const [modal, contextHolder] = Modal.useModal();
+  const queryClient = useQueryClient();
   const [input, setInput] = useState({
     name: "",
     financialForecastId: props.id,
@@ -44,7 +44,7 @@ const ProductForm = (props: Props) => {
     onSuccess: () => {
       modal.success({
         title: "Toode edukalt lisatud!",
-        onOk: () => props.fetchForecast()
+        onOk: () => queryClient.refetchQueries({queryKey: ["loadFinancialForecastById"]})
       })
     }
   });
