@@ -6,6 +6,20 @@ export class FinancialOperationService extends BaseEntityService<FinancialOperat
     super("operations");
   }
 
+  async update(data: FinancialOperation, url: string = ""): Promise<FinancialOperation | undefined> {
+    try {
+      const response = await this.axios.put<FinancialOperation>(url, data);
+      if (response.status === 200) {
+        console.log('response', response)
+        return response.data;
+      }
+      return undefined;
+    } catch (e: any) {
+      console.log("error", e);
+      throw Error(e.response?.data?.message ?? e.message ?? 'Unknown error');
+    }
+  }
+
   async getExpensesForForecast(
     id: string,
   ): Promise<FinancialOperation[] | undefined> {

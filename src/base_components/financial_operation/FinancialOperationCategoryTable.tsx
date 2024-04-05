@@ -26,7 +26,7 @@ const FinancialOperationCategoryTable = (props: Props) => {
 
   const addFinancialOperation = useMutation({
     mutationFn: async (financialOperation: FinancialOperation) =>
-      financialOperationService.add(financialOperation, `/${props.forecastId}/add`),
+      financialOperationService.update(financialOperation, `/${props.forecastId}/add`),
     onSuccess: async () => {
       await queryClient.refetchQueries({queryKey: ["getExpensesForForecast"]});
       await queryClient.refetchQueries({queryKey: ["getIncomesForForecast"]});

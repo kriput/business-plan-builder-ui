@@ -33,7 +33,7 @@ const FinancialOperationFormModal = (props: Props) => {
 
   const addFinancialOperation = useMutation({
     mutationFn: async (financialOperation: FinancialOperation) =>
-      await financialOperationService.add(financialOperation, `/${props.forecastId}/add`),
+      await financialOperationService.update(financialOperation, `/${props.forecastId}/add`),
     onSuccess: async ()  => {
       await queryClient.refetchQueries({queryKey: ["getExpensesForForecast"]});
       await queryClient.refetchQueries({queryKey: ["getIncomesForForecast"]});
