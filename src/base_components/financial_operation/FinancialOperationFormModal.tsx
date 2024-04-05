@@ -36,6 +36,7 @@ const FinancialOperationFormModal = (props: Props) => {
       await financialOperationService.add(financialOperation, `/${props.forecastId}/add`),
     onSuccess: async ()  => {
       await queryClient.refetchQueries({queryKey: ["getExpensesForForecast"]});
+      await queryClient.refetchQueries({queryKey: ["getIncomesForForecast"]});
       setInput({ ...input, subtype: undefined });
       setShowModal(false);
     },
