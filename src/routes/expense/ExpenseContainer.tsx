@@ -2,22 +2,44 @@ import { useQuery } from "@tanstack/react-query";
 import { FinancialOperationService } from "../../services/FinancialOperationService";
 import { Col, Divider, Row, Skeleton, Tag } from "antd";
 import SimpleTotalPerPeriodTable from "../../base_components/financial_operation/SimpleTotalPerPeriodTable";
-import {
-  countTotalForAllOperationsPerPeriod,
-  countVATForPeriod,
-  getTotalsPerPeriod,
-} from "../forecast/container/FinancialForecastContainer";
+import { getTotalsPerPeriod } from "../forecast/container/FinancialForecastContainer";
 import FinancialOperationOverview from "../../base_components/financial_operation/FinancialOperationOverview";
 import ErrorResult from "../../base_components/ErrorResult";
 import { EXPENSE_CATEGORY_LIST } from "./ExpenseCategoryListCreator";
 import { useState } from "react";
 import { FinancialOperation } from "../../domain/FinancialOperation";
 import { FinancialOperationType } from "../../enums/FinancialOperationType";
+import { VAT } from "../../index";
 
 interface Props {
   forecastId: number;
   latestYear: number;
 }
+
+const countVATForPeriod = (
+    financialOperations: FinancialOperation[],
+    year: number,
+) => {
+  const totalForPeriod = getTotalsPerPeriod(financialOperations);
+  return (
+      totalForPeriod
+      .filter((totalPerPeriod) => totalPerPeriod.year === year)
+      .reduce((sum, currentValue) => sum + currentValue.sum, 0) * VAT
+  );
+};
+
+const countTotalForAllOperationsPerPeriod = (
+    financialOperations: FinancialOperation[],
+    year: number,
+) => {
+  const totalsForPeriod = getTotalsPerPeriod(financialOperations);
+  return (
+      totalsForPeriod
+      .filter((totalPerPeriod) => totalPerPeriod.year === year)
+      .reduce((sum, currentValue) => sum + currentValue.sum, 0) +
+      countVATForPeriod(financialOperations, year)
+  );
+};
 
 const ExpenseContainer = (props: Props) => {
   const [expenses, setExpenses] = useState([] as FinancialOperation[]);
@@ -43,7 +65,7 @@ const ExpenseContainer = (props: Props) => {
         <Col>
           <SimpleTotalPerPeriodTable
             dataProcessor={countTotalForAllOperationsPerPeriod}
-            totalsPerPeriod={getTotalsPerPeriod(expenses)}
+            financialOperations={expenses}
             latestYear={props.latestYear}
             addFirstBlank={false}
           />
@@ -67,9 +89,7 @@ const ExpenseContainer = (props: Props) => {
                 <SimpleTotalPerPeriodTable
                   addFirstBlank={true}
                   latestYear={props.latestYear}
-                  totalsPerPeriod={getTotalsPerPeriod(
-                    expenses,
-                  )}
+                  financialOperations={expenses}
                   dataProcessor={countVATForPeriod}
                 />
               </Tag>

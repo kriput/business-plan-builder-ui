@@ -13,7 +13,6 @@ import {
 import IncomeContainer from "../../income/IncomeContainer";
 import { Product } from "../../../domain/Product";
 import { TotalPerPeriod } from "../../../domain/TotalForPeriod";
-import { VAT } from "../../../index";
 import ExpenseContainer from "../../expense/ExpenseContainer";
 import { FinancialOperation } from "../../../domain/FinancialOperation";
 
@@ -38,27 +37,10 @@ export const getLatestYear = (products: Product[]) => {
   }, new Date().getFullYear());
 };
 
-export const countVATForPeriod = (
-  totalForPeriod: TotalPerPeriod[],
-  year: number,
-) => {
-  return (
-    totalForPeriod
-      .filter((totalPerPeriod) => totalPerPeriod.year === year)
-      .reduce((sum, currentValue) => sum + currentValue.sum, 0) * VAT
-  );
-};
-
-export const countTotalForAllOperationsPerPeriod = (
-  totalsPerPeriod: TotalPerPeriod[],
-  year: number,
-) => {
-  return (
-    totalsPerPeriod
-      .filter((totalPerPeriod) => totalPerPeriod.year === year)
-      .reduce((sum, currentValue) => sum + currentValue.sum, 0) +
-    countVATForPeriod(totalsPerPeriod, year)
-  );
+export const addNewTotalPerPeriod = (financialOperation: FinancialOperation, year: number) => {
+  const createdTotalPerPeriod: TotalPerPeriod = { sum: 0, year: year };
+  financialOperation.totalsPerPeriod.push(createdTotalPerPeriod);
+  return createdTotalPerPeriod;
 };
 
 export const getTotalsPerPeriod = (financialOperations: FinancialOperation[]) =>

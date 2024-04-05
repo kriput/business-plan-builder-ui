@@ -7,6 +7,8 @@ export const INCOME_CATEGORY_LIST: FinancialOperationCategory[] = [
     icon: "🛒",
     acceptedFinancialOperationSubtypes: [
       FinancialOperationSubtype.SALES_INCOME,
+      FinancialOperationSubtype.SALES_INCOME_WITH_TAX,
+      FinancialOperationSubtype.SALES_INCOME_WITHOUT_TAX,
     ],
   },
   {

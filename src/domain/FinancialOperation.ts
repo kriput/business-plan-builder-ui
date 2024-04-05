@@ -5,6 +5,7 @@ import {FinancialOperationType} from "../enums/FinancialOperationType";
 
 export interface FinancialOperation extends BaseEntity {
   type: FinancialOperationType,
-  subtype?: FinancialOperationSubtype
+  subtype?: FinancialOperationSubtype,
+  tax?: number
   totalsPerPeriod: TotalPerPeriod[]
 }
