@@ -53,6 +53,9 @@ const ProductContainer = (props: Props) => {
         ),
         children: (
           <ProductPerPeriodTable
+            sellingInCreditRate={
+              props.financialForecast?.sellingInCreditRate ?? 0
+            }
             product={product}
           />
         ),
@@ -67,12 +70,12 @@ const ProductContainer = (props: Props) => {
         <h2>Toodete ülevaade</h2>
       </Row>
       <Row justify="center">
-        <ProductOverview products={props.financialForecast?.products ?? []}/>
+        <ProductOverview products={props.financialForecast?.products ?? []} />
       </Row>
       <Divider />
 
-      <br/>
-      <br/>
+      <br />
+      <br />
       <Row justify="center">
         <Col>
           <h2>
@@ -94,13 +97,10 @@ const ProductContainer = (props: Props) => {
           </Row>
           <br />
           <Row justify="center">
-            <ProductForm
-              id={props.financialForecast?.id}
-            />
+            <ProductForm id={props.financialForecast?.id} />
           </Row>
         </>
       )}
-
 
       {props.financialForecast?.products?.length === 0 && (
         <>
@@ -113,11 +113,13 @@ const ProductContainer = (props: Props) => {
         </>
       )}
 
-        {props.financialForecast?.products?.length !== 0 && (
-            <Row justify="center" style={{marginTop: "2rem"}}>
-              <Col span={20}><Collapse items={items}/></Col>
-            </Row>
-        )}
+      {props.financialForecast?.products?.length !== 0 && (
+        <Row justify="center" style={{ marginTop: "2rem" }}>
+          <Col span={20}>
+            <Collapse items={items} />
+          </Col>
+        </Row>
+      )}
     </>
   );
 };

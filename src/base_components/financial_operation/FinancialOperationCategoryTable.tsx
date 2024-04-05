@@ -2,11 +2,14 @@ import { InputNumber, message, Popconfirm, Table, TableProps, Tag } from "antd";
 import { FinancialOperation } from "../../domain/FinancialOperation";
 import { useState } from "react";
 import { FinancialOperationSubtype } from "../../enums/FinancialOperationSubtype";
-import { TotalPerPeriod } from "../../domain/TotalForPeriod";
 import { parseToFinancialOperationSubtype } from "./FinancialOperationOverview";
 import { FinancialOperationService } from "../../services/FinancialOperationService";
-import {useMutation, useQueryClient} from "@tanstack/react-query";
-import { getPrice } from "../../routes/forecast/container/FinancialForecastContainer";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  addNewTotalPerPeriod,
+  getPercents,
+  getPrice,
+} from "../../routes/forecast/container/FinancialForecastContainer";
 
 interface Props {
   forecastId: number;
@@ -26,19 +29,13 @@ const FinancialOperationCategoryTable = (props: Props) => {
       financialOperationService.add(financialOperation, `/${props.forecastId}/add`),
     onSuccess: async () => {
       await queryClient.refetchQueries({queryKey: ["getExpensesForForecast"]});
+      await queryClient.refetchQueries({queryKey: ["getIncomesForForecast"]});
     },
     onError: error => messageApi.error('Andmete muutmine ebaõnnestus! ' + error.message)
   });
 
-  const addNewTotalPerPeriod = (financialOperation: FinancialOperation, year: number) => {
-    const createdTotalPerPeriod: TotalPerPeriod = { sum: 0, year: year };
-    financialOperation.totalsPerPeriod.push(createdTotalPerPeriod);
-    return createdTotalPerPeriod;
-  };
-
   const onSubmit = (year: number, subtype: FinancialOperationSubtype, sum: number) => {
-    const financialOperations = props.financialOperations;
-    const operationToUpdate = financialOperations.find(
+    const operationToUpdate = props.financialOperations.find(
       (exp) => exp.subtype === subtype,
     );
 
@@ -57,7 +54,7 @@ const FinancialOperationCategoryTable = (props: Props) => {
       width: "10rem",
       key: "subtype",
       title: "Alamkategooria",
-      render: (value: FinancialOperation) => parseToFinancialOperationSubtype(value.subtype ?? ""),
+      render: (value: FinancialOperation) => parseToFinancialOperationSubtype(value.subtype ?? "") + (value.tax ? `, käibemaks: ${getPercents(value.tax)}` : "")
     });
 
     for (let i = new Date().getFullYear(); i <= props.latestYear; i++) {

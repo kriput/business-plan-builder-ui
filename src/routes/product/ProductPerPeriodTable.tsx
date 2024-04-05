@@ -3,12 +3,13 @@ import {
   getPercents,
   getPrice,
 } from "../forecast/container/FinancialForecastContainer";
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import ProductPerPeriodForm from "./ProductPerPeriodForm";
 import { Product } from "../../domain/Product";
 
 interface Props {
   product: Product | undefined;
+  sellingInCreditRate: number;
 }
 
 interface ProductPerPeriodTableDto {
@@ -27,20 +28,20 @@ const columns: TableProps["columns"] = [
     dataIndex: "year",
     key: "year",
     render: (value) =>
-        value ? (
-            <Tag color="blue">{value}</Tag>
-        ) : (
-            <Tag color="red">Palun lisage järgmise aasta andmed</Tag>
-        ),
+      value ? (
+        <Tag color="blue">{value}</Tag>
+      ) : (
+        <Tag color="red">Palun lisage järgmise aasta andmed</Tag>
+      ),
   },
   {
     title: <b>AASTA KÄIVE KOKKU</b>,
     dataIndex: "yearTurnOver",
     key: "yearTurnOver",
     render: (value) => (
-        <b>
-          <Tag color="green">{getPrice(value)}</Tag>
-        </b>
+      <b>
+        <Tag color="green">{getPrice(value)}</Tag>
+      </b>
     ),
   },
   {
@@ -70,18 +71,20 @@ const columns: TableProps["columns"] = [
 
 const ProductPerPeriodTable = (props: Props) => {
   const [isFormOpen, setIsFormOpen] = useState(false);
-  useEffect(() => window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'}), [isFormOpen])
-  const countYearTurnOver = (soldQuantity: number, costPerItem: number) =>
-    soldQuantity * costPerItem;
+  useEffect(
+    () =>
+      window.scrollTo({
+        top: document.body.scrollHeight,
+        behavior: "smooth",
+      }),
+    [isFormOpen],
+  );
 
   const dataSource = props.product?.productsPerPeriod?.map(
     (productPerPeriod) => {
       const productPerPeriodDto = productPerPeriod as ProductPerPeriodTableDto;
       productPerPeriodDto.key = productPerPeriod.year;
-      productPerPeriodDto.yearTurnOver = countYearTurnOver(
-        productPerPeriod.costPerItem,
-        productPerPeriod.quantity,
-      );
+      productPerPeriodDto.yearTurnOver = productPerPeriod.price * productPerPeriod.quantity;
       return productPerPeriodDto;
     },
   );
@@ -97,6 +100,7 @@ const ProductPerPeriodTable = (props: Props) => {
       <br />
       {isFormOpen && (
         <ProductPerPeriodForm
+          sellingInCreditRate={props.sellingInCreditRate}
           setIsFormOpen={setIsFormOpen}
           product={props.product}
         />

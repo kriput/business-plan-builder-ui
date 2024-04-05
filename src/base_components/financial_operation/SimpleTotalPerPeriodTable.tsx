@@ -1,13 +1,13 @@
 import { Table, TableProps, Tag } from "antd";
-import { TotalPerPeriod } from "../../domain/TotalForPeriod";
-import {getPrice} from "../../routes/forecast/container/FinancialForecastContainer";
+import {
+  getPrice,
+  roundNumberToTwoDecimalPlaces,
+} from "../../routes/forecast/container/FinancialForecastContainer";
+import { FinancialOperation } from "../../domain/FinancialOperation";
 
 interface Props {
-  dataProcessor: (
-    totalsPerPeriod: TotalPerPeriod[],
-    year: number,
-  ) => number;
-  totalsPerPeriod: TotalPerPeriod[];
+  dataProcessor: (incomes: FinancialOperation[], year: number) => number;
+  financialOperations: FinancialOperation[];
   latestYear: number;
   addFirstBlank: boolean;
 }
@@ -22,7 +22,7 @@ const SimpleTotalPerPeriodTable = (props: Props) => {
       columns?.push({
         title: <Tag color="blue">{i}</Tag>,
         key: i,
-        render: () => getPrice(props.dataProcessor(props.totalsPerPeriod, i)),
+        render: () => getPrice(roundNumberToTwoDecimalPlaces(props.dataProcessor(props.financialOperations, i))),
       });
     }
     return columns;
