@@ -1,13 +1,24 @@
 import ErrorResult from "../../base_components/ErrorResult";
-import { Button, Form, Input, Row } from "antd";
+import { Button, Form, Input, message, Row } from "antd";
 import React, { useState } from "react";
-import {useMutation, UseMutationResult, useQueryClient} from "@tanstack/react-query";
+import {
+  useMutation,
+  UseMutationResult,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { Product } from "../../domain/Product";
 import { ProductService } from "../../services/ProductService";
 import { ProductPerPeriod } from "../../domain/ProductPerPeriod";
-
+import { FinancialOperationService } from "../../services/FinancialOperationService";
+import { FinancialOperation } from "../../domain/FinancialOperation";
+import { FinancialOperationType } from "../../enums/FinancialOperationType";
+import {
+  FinancialOperationSubtype,
+  financialOperationSubtypeMapping,
+} from "../../enums/FinancialOperationSubtype";
 
 interface Props {
+  sellingInCreditRate: number;
   product: Product | undefined;
   setIsFormOpen: Function;
 }
@@ -29,7 +40,9 @@ const getNextYearToInsert = (
 
 const ProductPerPeriodForm = (props: Props) => {
   const [form] = Form.useForm();
+  const [, contextHolder] = message.useMessage();
   const productService = new ProductService();
+  const financialOperationService = new FinancialOperationService();
   const queryClient = useQueryClient();
   const [input, setInput] = useState({
     quantity: 0,
@@ -56,6 +69,102 @@ const ProductPerPeriodForm = (props: Props) => {
     props.setIsFormOpen(false);
   };
 
+  const saveExpensesForProduct = async (product: Product) => {
+    const expense = {
+      type: FinancialOperationType.EXPENSE,
+      subtype: financialOperationSubtypeMapping.get(
+        FinancialOperationSubtype.RAW_MATERIALS,
+      ),
+      totalsPerPeriod: [
+        {
+          year: input.year,
+          sum:
+            input.quantity * input.costPerItem +
+            input.quantity * input.costPerItem * product.stockReserveRate,
+        },
+        {
+          year: input.year + 1,
+          sum:
+            0 - input.quantity * input.costPerItem * product.stockReserveRate,
+        },
+      ],
+    } as FinancialOperation;
+    return await financialOperationService.add(
+      expense,
+      `/${props.product?.financialForecastId}/add`,
+    );
+  };
+
+  const saveIncomesForProduct = async (product: Product) => {
+    const totalSumForThisPeriod =
+      input.quantity * input.price -
+      input.quantity * input.price * props.sellingInCreditRate;
+    const income = {
+      type: FinancialOperationType.INCOME,
+      subtype: financialOperationSubtypeMapping.get(
+        FinancialOperationSubtype.SALES_INCOME,
+      ),
+      totalsPerPeriod: [
+        {
+          year: input.year,
+          sum: totalSumForThisPeriod,
+        },
+        {
+          year: input.year + 1,
+          sum: input.quantity * input.price * props.sellingInCreditRate,
+        },
+      ],
+    } as FinancialOperation;
+    await financialOperationService.add(
+      income,
+      `/${props.product?.financialForecastId}/add`,
+    );
+
+    const incomeWithTax = {
+      type: FinancialOperationType.INCOME,
+      subtype: financialOperationSubtypeMapping.get(
+        FinancialOperationSubtype.SALES_INCOME_WITH_TAX,
+      ),
+      tax: product.tax,
+      totalsPerPeriod: [
+        {
+          year: input.year,
+          sum: totalSumForThisPeriod - input.forExport * totalSumForThisPeriod,
+        },
+        {
+          year: input.year + 1,
+          sum: input.quantity * input.price * props.sellingInCreditRate,
+        },
+      ],
+    } as FinancialOperation;
+
+    await financialOperationService.add(
+      incomeWithTax,
+      `/${props.product?.financialForecastId}/add`,
+    );
+
+    if (input.forExport > 0) {
+      const incomeWithoutTax = {
+        type: FinancialOperationType.INCOME,
+        subtype: financialOperationSubtypeMapping.get(
+          FinancialOperationSubtype.SALES_INCOME_WITHOUT_TAX,
+        ),
+        totalsPerPeriod: [
+          {
+            year: input.year,
+            sum: input.forExport * totalSumForThisPeriod,
+          },
+        ],
+      } as FinancialOperation;
+      await financialOperationService.add(
+        incomeWithoutTax,
+        `/${props.product?.financialForecastId}/add`,
+      );
+    }
+  };
+
+  const reload = () => window.location.reload();
+
   const addProduct: UseMutationResult<
     Product | undefined,
     Error,
@@ -65,15 +174,28 @@ const ProductPerPeriodForm = (props: Props) => {
       if (!product) {
         throw Error("Toode pole leitud!");
       }
-      return await productService.add(product, "/add");
+      try {
+        await saveExpensesForProduct(product);
+        await saveIncomesForProduct(product);
+      } catch (e) {
+        throw new Error();
+      }
+      return await productService.add(product, `/add`);
     },
     onSuccess: async () => {
-      await queryClient.refetchQueries({queryKey: ["loadFinancialForecastById"]});
+      await queryClient.refetchQueries({
+        queryKey: ["loadFinancialForecastById"],
+      });
+    },
+    onError: async () => {
+      await message.error("Viga andmete lisamisel");
+      setTimeout(reload, 2000);
     },
   });
 
   return (
     <>
+      {contextHolder}
       {addProduct.isError && (
         <ErrorResult
           errorMessage={`Salvestamine ebaõnnestus. ${addProduct.error.message}`}
@@ -88,7 +210,14 @@ const ProductPerPeriodForm = (props: Props) => {
             {getNextYearToInsert(props.product?.productsPerPeriod)}:
           </h4>
           <Form name="add_product_per_period" form={form} layout="inline">
-            <Form.Item label={<div>Müüdud <b>kogus</b></div>} name="quantity">
+            <Form.Item
+              label={
+                <div>
+                  Müüdud <b>kogus</b>
+                </div>
+              }
+              name="quantity"
+            >
               <Input
                 style={{ width: "8rem", marginBottom: "1rem" }}
                 onChange={(e) => handleChange(e.target)}
