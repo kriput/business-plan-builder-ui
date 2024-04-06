@@ -8,5 +8,5 @@ export interface FinancialForecast extends BaseEntity {
   buildingDeprecationRate?: number;
   equipmentDeprecationRate?: number;
   products?: Product[];
-  expenses?: FinancialOperation[];
+  financialOperations?: FinancialOperation[];
 }
