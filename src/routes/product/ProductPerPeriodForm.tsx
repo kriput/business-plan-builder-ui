@@ -66,7 +66,6 @@ const ProductPerPeriodForm = (props: Props) => {
   const handleSubmit = () => {
     props.product?.productsPerPeriod.push(input);
     addProduct.mutate(props.product);
-    props.setIsFormOpen(false);
   };
 
   const saveExpensesForProduct = async (product: Product) => {
@@ -174,18 +173,16 @@ const ProductPerPeriodForm = (props: Props) => {
       if (!product) {
         throw Error("Toode pole leitud!");
       }
-      try {
-        await saveExpensesForProduct(product);
-        await saveIncomesForProduct(product);
-      } catch (e) {
-        throw new Error();
-      }
+
+      await saveExpensesForProduct(product);
+      await saveIncomesForProduct(product);
       return await productService.add(product, `/add`);
     },
     onSuccess: async () => {
       await queryClient.refetchQueries({
         queryKey: ["loadFinancialForecastById"],
       });
+      props.setIsFormOpen(false);
     },
     onError: async () => {
       await message.error("Viga andmete lisamisel");
