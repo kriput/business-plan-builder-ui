@@ -111,7 +111,7 @@ const FinancialForecastContainer = () => {
           <BarChartOutlined /> Kasumiaruanne
         </span>
       ),
-      children: <IncomeStatementContainer/>,
+      children: <IncomeStatementContainer latestYear={latestYear()} financialForecast={getForecastById.data!}/>,
     },
     {
       key: "5",
@@ -135,9 +135,7 @@ const FinancialForecastContainer = () => {
           </h1>
         </Col>
       </Row>
-      <div style={{ marginLeft: "1rem" }}>
         <Tabs defaultActiveKey="1" size="large" items={items} />
-      </div>
     </>
   );
 };

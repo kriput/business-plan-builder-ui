@@ -23,9 +23,9 @@ interface PeriodData {
 
 export const getTotalSold = (productsForPeriod: ProductPerPeriod[]) => productsForPeriod.reduce((accumulator, currentValue) => accumulator + currentValue.price * currentValue.quantity, 0)
 
-const getTotalForExportInEuro = (productsForPeriod: ProductPerPeriod[]) => productsForPeriod.reduce((accumulator, currentValue) => accumulator + currentValue.price * currentValue.quantity * currentValue.forExport, 0)
+export const getTotalForExportInEuro = (productsForPeriod: ProductPerPeriod[]) => productsForPeriod.reduce((accumulator, currentValue) => accumulator + currentValue.price * currentValue.quantity * currentValue.forExport, 0)
 
-const getSoldUnits = (productsForPeriod: ProductPerPeriod[]) => productsForPeriod.reduce((accumulator, currentValue) => accumulator + currentValue.quantity, 0)
+export const getSoldUnits = (productsForPeriod: ProductPerPeriod[]) => productsForPeriod.reduce((accumulator, currentValue) => accumulator + currentValue.quantity, 0)
 
 const ProductOverview = (props: Props) => {
 
@@ -92,7 +92,7 @@ const ProductOverview = (props: Props) => {
   }
 
   return (
-      <Table dataSource={getData()} columns={columns} pagination={false} rowKey={"period"}/>
+      <Table scroll={{ x: "max-content" }} dataSource={getData()} columns={columns} pagination={false} rowKey={"period"}/>
   );
 };
 

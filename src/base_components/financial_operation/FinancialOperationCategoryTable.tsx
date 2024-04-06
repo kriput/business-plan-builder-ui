@@ -12,7 +12,7 @@ import { FinancialOperation } from "../../domain/FinancialOperation";
 import { useState } from "react";
 import {
   FinancialOperationSubtype,
-  financialOperationSubtypeMapping
+  financialOperationSubtypeMapping,
 } from "../../enums/FinancialOperationSubtype";
 import { parseToFinancialOperationSubtype } from "./FinancialOperationOverview";
 import { FinancialOperationService } from "../../services/FinancialOperationService";
@@ -22,7 +22,7 @@ import {
   getPercents,
   getPrice,
 } from "../../routes/forecast/container/FinancialForecastContainer";
-import {SOCIAL_TAX, UNEMPLOYMENT_INSURANCE_TAX} from "../../index";
+import { SOCIAL_TAX, UNEMPLOYMENT_INSURANCE_TAX } from "../../index";
 
 interface Props {
   forecastId: number;
@@ -42,7 +42,7 @@ const automaticallyGeneratedFields = [
 interface InputDto {
   year: number;
   subtype: FinancialOperationSubtype;
-  sum: number
+  sum: number;
 }
 
 const FinancialOperationCategoryTable = (props: Props) => {
@@ -54,9 +54,24 @@ const FinancialOperationCategoryTable = (props: Props) => {
 
   const addFinancialOperation = useMutation({
     mutationFn: async (input: InputDto) => {
-      if (parseToFinancialOperationSubtype(input.subtype) === FinancialOperationSubtype.SALARY) {
-        await makeRequest(input.year + 1, financialOperationSubtypeMapping.get(FinancialOperationSubtype.SOCIAL_TAX) as FinancialOperationSubtype, input.sum * SOCIAL_TAX);
-        await makeRequest(input.year + 1, financialOperationSubtypeMapping.get(FinancialOperationSubtype.UNEMPLOYMENT_INSURANCE_TAX) as FinancialOperationSubtype, input.sum * UNEMPLOYMENT_INSURANCE_TAX);
+      if (
+        parseToFinancialOperationSubtype(input.subtype) ===
+        FinancialOperationSubtype.SALARY
+      ) {
+        await makeRequest(
+          input.year + 1,
+          financialOperationSubtypeMapping.get(
+            FinancialOperationSubtype.SOCIAL_TAX,
+          ) as FinancialOperationSubtype,
+          input.sum * SOCIAL_TAX,
+        );
+        await makeRequest(
+          input.year + 1,
+          financialOperationSubtypeMapping.get(
+            FinancialOperationSubtype.UNEMPLOYMENT_INSURANCE_TAX,
+          ) as FinancialOperationSubtype,
+          input.sum * UNEMPLOYMENT_INSURANCE_TAX,
+        );
       }
       return await makeRequest(input.year, input.subtype, input.sum);
     },
@@ -68,8 +83,8 @@ const FinancialOperationCategoryTable = (props: Props) => {
     },
     onError: (error) => {
       console.log(error);
-      messageApi.error("Andmete muutmine ebaõnnestus! " + error.message)
-    }
+      messageApi.error("Andmete muutmine ebaõnnestus! " + error.message);
+    },
   });
 
   const makeRequest = async (
@@ -81,23 +96,21 @@ const FinancialOperationCategoryTable = (props: Props) => {
       (exp) => exp.subtype === subtype,
     );
 
-    console.log(subtype)
-
     const totalPerPeriodToUpdate =
       operationToUpdate?.totalsPerPeriod.find((tPP) => tPP?.year === year) ??
       addNewTotalPerPeriod(operationToUpdate!, year);
 
     totalPerPeriodToUpdate.sum = sum;
     return await financialOperationService.update(
-        operationToUpdate!,
-        `/${props.forecastId}/add`,
+      operationToUpdate!,
+      `/${props.forecastId}/add`,
     );
   };
 
   const getColumns = (): TableProps["columns"] => {
     const tableProps = [] as TableProps["columns"];
     tableProps?.push({
-      width: "10rem",
+      width: "15rem",
       key: "subtype",
       title: "Alamkategooria",
       render: (value: FinancialOperation) => (
@@ -159,7 +172,13 @@ const FinancialOperationCategoryTable = (props: Props) => {
                 okText="Jah"
                 cancelText="Ei"
                 onCancel={addFinancialOperation.reset}
-                onConfirm={() => addFinancialOperation.mutate({year: i, subtype: value.subtype!,sum: valueInput})}
+                onConfirm={() =>
+                  addFinancialOperation.mutate({
+                    year: i,
+                    subtype: value.subtype!,
+                    sum: valueInput,
+                  })
+                }
               >
                 <span style={{ cursor: "pointer" }}>
                   {getPrice(
@@ -180,6 +199,7 @@ const FinancialOperationCategoryTable = (props: Props) => {
   return (
     <>
       <Table
+        scroll={{ x: "max-content" }}
         rowKey="id"
         size="small"
         pagination={false}

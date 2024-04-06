@@ -116,7 +116,7 @@ const ProductContainer = (props: Props) => {
 
       {props.financialForecast?.products?.length !== 0 && (
         <Row justify="center" style={{ marginTop: "2rem" }}>
-          <Col span={20}>
+          <Col xs={24} xl={20}>
             <Collapse items={items} />
           </Col>
         </Row>

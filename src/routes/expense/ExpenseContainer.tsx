@@ -79,6 +79,8 @@ const ExpenseContainer = (props: Props) => {
         <Divider/>
         {getExpenses.isSuccess && (
             <>
+              <Row>
+              <Col span={24}>
               <FinancialOperationOverview
                   financialOperationType={FinancialOperationType.EXPENSE}
                   forecastId={props.forecastId}
@@ -87,8 +89,10 @@ const ExpenseContainer = (props: Props) => {
                   financialOperationCategoryList={EXPENSE_CATEGORY_LIST}
                   title="Majandustegevuse käigus tekkivad kulud"
               />
+              </Col>
+              </Row>
               <Row>
-                <Col span={20}>
+                <Col xs={24} xl={20}>
                   <Tag style={{width: "100%"}} color="red">
                     <h3>Operatsioonidelt makstav käibemaks: </h3>
                     <SimpleTotalPerPeriodTable

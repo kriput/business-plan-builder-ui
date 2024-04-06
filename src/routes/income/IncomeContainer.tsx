@@ -92,7 +92,7 @@ const IncomeContainer = (props: Props) => {
             title="Laekumised müügist"
           />
           <Row>
-            <Col span={20}>
+            <Col xs={24} xl={20}>
               <Tag style={{ width: "100%" }} color="red">
                 <h3>Operatsioonidelt makstav käibemaks: </h3>
                 <SimpleTotalPerPeriodTable

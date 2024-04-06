@@ -15,7 +15,7 @@ interface Props {
 const SimpleTotalPerPeriodTable = (props: Props) => {
   const getColumns = () => {
     const columns = props.addFirstBlank
-      ? ([{ width: "10rem" }] as TableProps["columns"])
+      ? ([{ width: "15rem" }] as TableProps["columns"])
       : ([] as TableProps["columns"]);
 
     for (let i = new Date().getFullYear(); i <= props.latestYear; i++) {
@@ -29,7 +29,7 @@ const SimpleTotalPerPeriodTable = (props: Props) => {
   };
 
   return (
-    <Table
+    <Table scroll={{ x: "max-content" }}
       columns={getColumns()}
       size="small"
       dataSource={[""]}

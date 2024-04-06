@@ -4,13 +4,14 @@ import {
   FinancialOperationSubtype,
   financialOperationSubtypeMapping,
 } from "../../enums/FinancialOperationSubtype";
-import { Alert, Button, Form, Modal, Select, Tag } from "antd";
+import { Alert, Button, Form, Modal, Select, Tooltip } from "antd";
 import { useForm } from "antd/es/form/Form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { FinancialOperationService } from "../../services/FinancialOperationService";
 import ErrorResult from "../ErrorResult";
 import { parseToFinancialOperationSubtype } from "./FinancialOperationOverview";
 import { FinancialOperationType } from "../../enums/FinancialOperationType";
+import { CheckOutlined, PlusOutlined } from "@ant-design/icons";
 
 interface Props {
   forecastId: number;
@@ -33,10 +34,16 @@ const FinancialOperationFormModal = (props: Props) => {
 
   const addFinancialOperation = useMutation({
     mutationFn: async (financialOperation: FinancialOperation) => {
-      if (parseToFinancialOperationSubtype(input.subtype ?? "") === FinancialOperationSubtype.SALARY) {
+      if (
+        parseToFinancialOperationSubtype(input.subtype ?? "") ===
+        FinancialOperationSubtype.SALARY
+      ) {
         await handleSalaryInput();
       } else {
-        await financialOperationService.update(financialOperation, `/${props.forecastId}/add`);
+        await financialOperationService.update(
+          financialOperation,
+          `/${props.forecastId}/add`,
+        );
       }
     },
     onSuccess: async () => {
@@ -51,20 +58,33 @@ const FinancialOperationFormModal = (props: Props) => {
 
   const handleSalaryInput = async () => {
     await financialOperationService.update(input, `/${props.forecastId}/add`);
-    input.subtype = financialOperationSubtypeMapping.get(FinancialOperationSubtype.SOCIAL_TAX) as FinancialOperationSubtype
+    input.subtype = financialOperationSubtypeMapping.get(
+      FinancialOperationSubtype.SOCIAL_TAX,
+    ) as FinancialOperationSubtype;
     await financialOperationService.update(input, `/${props.forecastId}/add`);
-    input.subtype = financialOperationSubtypeMapping.get(FinancialOperationSubtype.UNEMPLOYMENT_INSURANCE_TAX) as FinancialOperationSubtype
+    input.subtype = financialOperationSubtypeMapping.get(
+      FinancialOperationSubtype.UNEMPLOYMENT_INSURANCE_TAX,
+    ) as FinancialOperationSubtype;
     await financialOperationService.update(input, `/${props.forecastId}/add`);
-  }
+  };
 
   const handleChange = (value: FinancialOperationSubtype) => {
-    setInput({ ...input, subtype: financialOperationSubtypeMapping.get(value) as FinancialOperationSubtype });
+    setInput({
+      ...input,
+      subtype: financialOperationSubtypeMapping.get(
+        value,
+      ) as FinancialOperationSubtype,
+    });
   };
 
   const options = props.acceptedFinancialOperationSubtypes
-    .filter((operationType) =>
+    .filter(
+      (operationType) =>
         !props.financialOperations
-        ?.map((operation) => parseToFinancialOperationSubtype(operation.subtype!))?.includes(operationType),
+          ?.map((operation) =>
+            parseToFinancialOperationSubtype(operation.subtype!),
+          )
+          ?.includes(operationType),
     )
     .map((opType) => {
       return { name: opType, value: opType };
@@ -72,14 +92,26 @@ const FinancialOperationFormModal = (props: Props) => {
 
   return (
     <div onClick={(e) => e.stopPropagation()}>
-      {options.length === 0 && <Tag style={{marginTop: '5px'}} color="green">Kõik alamkategooriad juba lisatud</Tag> }
-      {options.length > 0 && <Button onClick={() => setShowModal(true)}>+ Lisa alamkategooria</Button>}
+      {options.length === 0 && (
+        <Tooltip title="Kõik alamkategooriad juba lisatud">
+          <Button disabled>
+            <CheckOutlined style={{ color: "green" }} />
+          </Button>
+        </Tooltip>
+      )}
+      {options.length > 0 && (
+        <Tooltip title="Lisa alamkategooria">
+          <Button onClick={() => setShowModal(true)}>
+            <PlusOutlined />
+          </Button>
+        </Tooltip>
+      )}
 
       <Modal
         title={props.financialOperationCategory}
         onOk={() => addFinancialOperation.mutate(input)}
         okText="Lisa"
-        okButtonProps={{disabled: options.length === 0}}
+        okButtonProps={{ disabled: options.length === 0 }}
         cancelText="Sulge"
         onCancel={() => {
           addFinancialOperation.reset();
@@ -91,18 +123,28 @@ const FinancialOperationFormModal = (props: Props) => {
           <Form form={form}>
             <Form.Item label="Kulu tüüp: ">
               <Select
-                  value={parseToFinancialOperationSubtype(input.subtype ?? '') ?? null}
+                value={
+                  parseToFinancialOperationSubtype(input.subtype ?? "") ?? null
+                }
                 options={options}
                 onChange={handleChange}
                 disabled={options.length === 0}
               ></Select>
-              {options.length === 0 && <Alert type="warning" showIcon message="Kõik alamkategooriad on juba listaud!"/>}
+              {options.length === 0 && (
+                <Alert
+                  type="warning"
+                  showIcon
+                  message="Kõik alamkategooriad on juba listaud!"
+                />
+              )}
             </Form.Item>
           </Form>
         )}
         {addFinancialOperation.isError && (
           <ErrorResult
-            errorMessage={"Viga alamkategooria lisamisel! " + addFinancialOperation.error}
+            errorMessage={
+              "Viga alamkategooria lisamisel! " + addFinancialOperation.error
+            }
             buttonMessage={"Proovi uuesti"}
             onClick={addFinancialOperation.reset}
           />
