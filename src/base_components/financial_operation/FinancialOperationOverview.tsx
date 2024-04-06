@@ -94,7 +94,7 @@ const FinancialOperationOverview = (props: Props) => {
                   financialOperationCategory,
                 ) ?? []
               }
-              latestYear={latestYear}
+              latestYear={props.latestYear}
             />
           </>
         ),
