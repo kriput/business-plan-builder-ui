@@ -11,10 +11,10 @@ import {
   RiseOutlined,
 } from "@ant-design/icons";
 import IncomeContainer from "../../income/IncomeContainer";
-import { Product } from "../../../domain/Product";
 import { TotalPerPeriod } from "../../../domain/TotalForPeriod";
 import ExpenseContainer from "../../expense/ExpenseContainer";
 import { FinancialOperation } from "../../../domain/FinancialOperation";
+import IncomeStatementContainer from "../../income_statement/IncomeStatementContainer";
 
 export const getPercents = (num: number) => {
   return `${num * 100} %`;
@@ -25,16 +25,6 @@ export const roundNumberToTwoDecimalPlaces = (num: number) =>
 
 export const getPrice = (price: number) => {
   return `${price} €`;
-};
-
-export const getLatestYear = (products: Product[]) => {
-  return products.reduce((prev, next) => {
-    const maxYearFromProduct = next.productsPerPeriod.reduce(
-      (a, b) => Math.max(a, b.year),
-      new Date().getFullYear(),
-    );
-    return Math.max(prev, maxYearFromProduct);
-  }, new Date().getFullYear());
 };
 
 export const addNewTotalPerPeriod = (financialOperation: FinancialOperation, year: number) => {
@@ -57,6 +47,25 @@ const FinancialForecastContainer = () => {
     retry: 0,
   });
 
+  const latestYear = () => {
+    const latestFromProducts = getForecastById.data?.products?.reduce((prev, next) => {
+      const maxYearFromProduct = next.productsPerPeriod.reduce(
+          (a, b) => Math.max(a, b.year),
+          new Date().getFullYear(),
+      );
+      return Math.max(prev, maxYearFromProduct);
+    }, new Date().getFullYear());
+
+    const latestFromOperations = getForecastById.data?.financialOperations?.reduce((prev, next) => {
+      const maxYearFromProduct = next.totalsPerPeriod.reduce(
+          (a, b) => Math.max(a, b.year),
+          new Date().getFullYear(),
+      );
+      return Math.max(prev, maxYearFromProduct);
+    }, new Date().getFullYear());
+    return Math.max(latestFromOperations!, latestFromProducts!);
+  };
+
   const items: TabsProps["items"] = [
     {
       key: "1",
@@ -65,7 +74,7 @@ const FinancialForecastContainer = () => {
           <PieChartOutlined /> Tooted
         </span>
       ),
-      children: <ProductContainer financialForecast={getForecastById.data} />,
+      children: <ProductContainer latestYear={latestYear()} financialForecast={getForecastById.data} />,
     },
     {
       key: "2",
@@ -76,7 +85,7 @@ const FinancialForecastContainer = () => {
       ),
       children: (
         <IncomeContainer
-          latestYear={getLatestYear(getForecastById.data?.products ?? [])}
+          latestYear={latestYear()}
           forecastId={getForecastById.data?.id ?? 0}
         />
       ),
@@ -90,7 +99,7 @@ const FinancialForecastContainer = () => {
       ),
       children: (
         <ExpenseContainer
-          latestYear={getLatestYear(getForecastById.data?.products ?? [])}
+          latestYear={latestYear()}
           forecastId={getForecastById.data?.id ?? 0}
         />
       ),
@@ -102,7 +111,7 @@ const FinancialForecastContainer = () => {
           <BarChartOutlined /> Kasumiaruanne
         </span>
       ),
-      children: <>VARSTI TULEKUL</>,
+      children: <IncomeStatementContainer/>,
     },
     {
       key: "5",

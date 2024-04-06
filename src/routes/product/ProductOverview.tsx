@@ -1,6 +1,5 @@
 import { Table, TableProps, Tag } from "antd";
 import {
-  getLatestYear,
   getPercents,
   getPrice,
   roundNumberToTwoDecimalPlaces,
@@ -10,6 +9,7 @@ import { ProductPerPeriod } from "../../domain/ProductPerPeriod";
 
 interface Props {
   products: Product[];
+  latestYear: number;
 }
 
 interface PeriodData {
@@ -18,7 +18,7 @@ interface PeriodData {
   forExportInPercent: number,
   forExportInEuro: number,
   soldUnits: number,
-  averagePrice: number
+  averagePrice: number,
 }
 
 export const getTotalSold = (productsForPeriod: ProductPerPeriod[]) => productsForPeriod.reduce((accumulator, currentValue) => accumulator + currentValue.price * currentValue.quantity, 0)
@@ -28,7 +28,6 @@ const getTotalForExportInEuro = (productsForPeriod: ProductPerPeriod[]) => produ
 const getSoldUnits = (productsForPeriod: ProductPerPeriod[]) => productsForPeriod.reduce((accumulator, currentValue) => accumulator + currentValue.quantity, 0)
 
 const ProductOverview = (props: Props) => {
-  const latestYear = getLatestYear(props.products)
 
   const columns = [
     {
@@ -73,7 +72,7 @@ const ProductOverview = (props: Props) => {
     const data = [] as PeriodData[];
     const productsPerPeriod = props.products.map(p => p.productsPerPeriod).flat();
 
-    for (let i = new Date().getFullYear(); i <= latestYear; i++) {
+    for (let i = new Date().getFullYear(); i <= props.latestYear; i++) {
       const productsOnlyForThisPeriod = productsPerPeriod.filter(p => p.year === i);
 
       const totalSoldForPeriod = getTotalSold(productsOnlyForThisPeriod);

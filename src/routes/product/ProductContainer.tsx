@@ -17,6 +17,7 @@ import ProductOverview from "./ProductOverview";
 
 interface Props {
   financialForecast: FinancialForecast | undefined;
+  latestYear: number
 }
 
 const ProductContainer = (props: Props) => {
@@ -70,7 +71,7 @@ const ProductContainer = (props: Props) => {
         <h2>Toodete ülevaade</h2>
       </Row>
       <Row justify="center">
-        <ProductOverview products={props.financialForecast?.products ?? []} />
+        <ProductOverview latestYear={props.latestYear} products={props.financialForecast?.products ?? []} />
       </Row>
       <Divider />
 

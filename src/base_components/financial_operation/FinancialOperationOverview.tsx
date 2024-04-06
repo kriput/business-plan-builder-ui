@@ -16,7 +16,6 @@ import FinancialOperationCategoryTable from "./FinancialOperationCategoryTable";
 import { FinancialOperation } from "../../domain/FinancialOperation";
 import { FinancialOperationCategory } from "../../dto/FinancialOperationCategory";
 import FinancialOperationFormModal from "./FinancialOperationFormModal";
-import { CalendarOutlined } from "@ant-design/icons";
 import { FinancialOperationType } from "../../enums/FinancialOperationType";
 
 interface Props {
@@ -34,7 +33,6 @@ export const parseToFinancialOperationSubtype = (name: string) =>
 const FinancialOperationOverview = (props: Props) => {
   const [openPanels, setOpenPanels] = useState([] as string[] | string);
   const [showEmpty, setShowEmpty] = useState(true);
-  const [latestYear, setLatestYear] = useState(props.latestYear);
 
   const onSwitchChange = (checked: boolean) => setShowEmpty(checked);
 
@@ -142,25 +140,14 @@ const FinancialOperationOverview = (props: Props) => {
         </Space>
       </Row>
       <Row>
-        <Space size="large">
-          <Col>
-            <Button
-              onClick={() => setLatestYear(latestYear + 1)}
-              size="large"
-              type="dashed"
-            >
-              <CalendarOutlined /> Lisa veerg<b> {latestYear + 1}</b>
-            </Button>
-          </Col>
           <Col>
             <Alert
               type="info"
-              message="Aasta andmete muutmiseks klõpsake numbrile "
+              message="Aasta andmete muutmiseks klõpsake numbrile. Aasta lisamiseks lisage vastava aasta andmed vähemalt ühe toote alla."
               closable
               showIcon
             />
           </Col>
-        </Space>
       </Row>
 
       <br />
