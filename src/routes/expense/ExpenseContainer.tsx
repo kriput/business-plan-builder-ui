@@ -3,13 +3,16 @@ import { FinancialOperationService } from "../../services/FinancialOperationServ
 import { Col, Divider, Row, Skeleton, Tag } from "antd";
 import SimpleTotalPerPeriodTable from "../../base_components/financial_operation/SimpleTotalPerPeriodTable";
 import { getTotalsPerPeriod } from "../forecast/container/FinancialForecastContainer";
-import FinancialOperationOverview from "../../base_components/financial_operation/FinancialOperationOverview";
+import FinancialOperationOverview, {
+  parseToFinancialOperationSubtype
+} from "../../base_components/financial_operation/FinancialOperationOverview";
 import ErrorResult from "../../base_components/ErrorResult";
 import { EXPENSE_CATEGORY_LIST } from "./ExpenseCategoryListCreator";
 import { useState } from "react";
 import { FinancialOperation } from "../../domain/FinancialOperation";
 import { FinancialOperationType } from "../../enums/FinancialOperationType";
 import { VAT } from "../../index";
+import {FinancialOperationSubtype} from "../../enums/FinancialOperationSubtype";
 
 interface Props {
   forecastId: number;
@@ -20,7 +23,9 @@ const countVATForPeriod = (
     financialOperations: FinancialOperation[],
     year: number,
 ) => {
-  const totalForPeriod = getTotalsPerPeriod(financialOperations);
+  const totalForPeriod = getTotalsPerPeriod(financialOperations.filter(exp =>
+      parseToFinancialOperationSubtype(exp.subtype ?? "") !== FinancialOperationSubtype.SOCIAL_TAX &&
+      parseToFinancialOperationSubtype(exp.subtype ?? "") !== FinancialOperationSubtype.UNEMPLOYMENT_INSURANCE_TAX));
   return (
       totalForPeriod
       .filter((totalPerPeriod) => totalPerPeriod.year === year)
@@ -49,7 +54,7 @@ const ExpenseContainer = (props: Props) => {
     queryKey: ["getExpensesForForecast"],
     queryFn: async () => {
       const expenses = await financialOperationService.getExpensesForForecast(
-        props.forecastId.toString(),
+          props.forecastId.toString(),
       );
       setExpenses(expenses ?? []);
       return expenses;
@@ -57,55 +62,55 @@ const ExpenseContainer = (props: Props) => {
   });
 
   return (
-    <>
-      <Row justify="center">
-        <h2>Kulud kokku</h2>
-      </Row>
-      <Row justify="center">
-        <Col>
-          <SimpleTotalPerPeriodTable
-            dataProcessor={countTotalForAllOperationsPerPeriod}
-            financialOperations={expenses}
-            latestYear={props.latestYear}
-            addFirstBlank={false}
-          />
-        </Col>
-      </Row>
-      <Divider />
-      {getExpenses.isSuccess && (
-        <>
-          <FinancialOperationOverview
-            financialOperationType={FinancialOperationType.EXPENSE}
-            forecastId={props.forecastId}
-            latestYear={props.latestYear}
-            financialOperations={expenses}
-            financialOperationCategoryList={EXPENSE_CATEGORY_LIST}
-            title="Majandustegevuse käigus tekkivad kulud"
-          />
-          <Row>
-            <Col span={20}>
-              <Tag style={{ width: "100%" }} color="red">
-                <h3>Operatsioonidelt makstav käibemaks: </h3>
-                <SimpleTotalPerPeriodTable
-                  addFirstBlank={true}
+      <>
+        <Row justify="center">
+          <h2>Kulud kokku</h2>
+        </Row>
+        <Row justify="center">
+          <Col>
+            <SimpleTotalPerPeriodTable
+                dataProcessor={countTotalForAllOperationsPerPeriod}
+                financialOperations={expenses}
+                latestYear={props.latestYear}
+                addFirstBlank={false}
+            />
+          </Col>
+        </Row>
+        <Divider/>
+        {getExpenses.isSuccess && (
+            <>
+              <FinancialOperationOverview
+                  financialOperationType={FinancialOperationType.EXPENSE}
+                  forecastId={props.forecastId}
                   latestYear={props.latestYear}
                   financialOperations={expenses}
-                  dataProcessor={countVATForPeriod}
-                />
-              </Tag>
-            </Col>
-          </Row>
-        </>
-      )}
-      {getExpenses.isError && (
-        <ErrorResult
-          errorMessage={getExpenses.error.message}
-          buttonMessage={"Proovi uuesti"}
-          onClick={() => getExpenses.refetch()}
-        />
-      )}
-      {getExpenses.isPending && <Skeleton active />}
-    </>
+                  financialOperationCategoryList={EXPENSE_CATEGORY_LIST}
+                  title="Majandustegevuse käigus tekkivad kulud"
+              />
+              <Row>
+                <Col span={20}>
+                  <Tag style={{width: "100%"}} color="red">
+                    <h3>Operatsioonidelt makstav käibemaks: </h3>
+                    <SimpleTotalPerPeriodTable
+                        addFirstBlank={true}
+                        latestYear={props.latestYear}
+                        financialOperations={expenses}
+                        dataProcessor={countVATForPeriod}
+                    />
+                  </Tag>
+                </Col>
+              </Row>
+            </>
+        )}
+        {getExpenses.isError && (
+            <ErrorResult
+                errorMessage={getExpenses.error.message}
+                buttonMessage={"Proovi uuesti"}
+                onClick={() => getExpenses.refetch()}
+            />
+        )}
+        {getExpenses.isPending && <Skeleton active/>}
+      </>
   );
 };
 export default ExpenseContainer;

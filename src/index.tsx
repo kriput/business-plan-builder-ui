@@ -13,6 +13,8 @@ import FinancialForecastOverview from "./routes/forecast/components/FinancialFor
 import Home from "./base_components/Home";
 
 export const VAT: number = 0.22;
+export const SOCIAL_TAX = 0.33;
+export const UNEMPLOYMENT_INSURANCE_TAX = 0.008
 
 const router = createBrowserRouter([
   {

@@ -1,23 +1,23 @@
-import {useState} from "react";
-import {FinancialOperation} from "../../domain/FinancialOperation";
+import { useState } from "react";
+import { FinancialOperation } from "../../domain/FinancialOperation";
 import {
-  financialOperationSubtypeMapping,
   FinancialOperationSubtype,
+  financialOperationSubtypeMapping,
 } from "../../enums/FinancialOperationSubtype";
-import {Alert, Button, Form, Modal, Select, Tag} from "antd";
-import {useForm} from "antd/es/form/Form";
-import {useMutation, useQueryClient} from "@tanstack/react-query";
-import {FinancialOperationService} from "../../services/FinancialOperationService";
+import { Alert, Button, Form, Modal, Select, Tag } from "antd";
+import { useForm } from "antd/es/form/Form";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { FinancialOperationService } from "../../services/FinancialOperationService";
 import ErrorResult from "../ErrorResult";
-import {parseToFinancialOperationSubtype} from "./FinancialOperationOverview";
-import {FinancialOperationType} from "../../enums/FinancialOperationType";
+import { parseToFinancialOperationSubtype } from "./FinancialOperationOverview";
+import { FinancialOperationType } from "../../enums/FinancialOperationType";
 
 interface Props {
   forecastId: number;
   financialOperations: FinancialOperation[];
   financialOperationCategory: string;
   acceptedFinancialOperationSubtypes: FinancialOperationSubtype[];
-  financialOperationType: FinancialOperationType
+  financialOperationType: FinancialOperationType;
 }
 
 const FinancialOperationFormModal = (props: Props) => {
@@ -32,15 +32,30 @@ const FinancialOperationFormModal = (props: Props) => {
   const queryClient = useQueryClient();
 
   const addFinancialOperation = useMutation({
-    mutationFn: async (financialOperation: FinancialOperation) =>
-      await financialOperationService.update(financialOperation, `/${props.forecastId}/add`),
-    onSuccess: async ()  => {
-      await queryClient.refetchQueries({queryKey: ["getExpensesForForecast"]});
-      await queryClient.refetchQueries({queryKey: ["getIncomesForForecast"]});
+    mutationFn: async (financialOperation: FinancialOperation) => {
+      if (parseToFinancialOperationSubtype(input.subtype ?? "") === FinancialOperationSubtype.SALARY) {
+        await handleSalaryInput();
+      } else {
+        await financialOperationService.update(financialOperation, `/${props.forecastId}/add`);
+      }
+    },
+    onSuccess: async () => {
+      await queryClient.refetchQueries({
+        queryKey: ["getExpensesForForecast"],
+      });
+      await queryClient.refetchQueries({ queryKey: ["getIncomesForForecast"] });
       setInput({ ...input, subtype: undefined });
       setShowModal(false);
     },
   });
+
+  const handleSalaryInput = async () => {
+    await financialOperationService.update(input, `/${props.forecastId}/add`);
+    input.subtype = financialOperationSubtypeMapping.get(FinancialOperationSubtype.SOCIAL_TAX) as FinancialOperationSubtype
+    await financialOperationService.update(input, `/${props.forecastId}/add`);
+    input.subtype = financialOperationSubtypeMapping.get(FinancialOperationSubtype.UNEMPLOYMENT_INSURANCE_TAX) as FinancialOperationSubtype
+    await financialOperationService.update(input, `/${props.forecastId}/add`);
+  }
 
   const handleChange = (value: FinancialOperationSubtype) => {
     setInput({ ...input, subtype: financialOperationSubtypeMapping.get(value) as FinancialOperationSubtype });
