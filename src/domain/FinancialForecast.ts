@@ -5,8 +5,6 @@ import { FinancialOperation } from "./FinancialOperation";
 export interface FinancialForecast extends BaseEntity {
   name: string;
   sellingInCreditRate?: number;
-  buildingDeprecationRate?: number;
-  equipmentDeprecationRate?: number;
   products?: Product[];
   financialOperations?: FinancialOperation[];
 }
