@@ -92,6 +92,7 @@ const ProductPerPeriodTable = (props: Props) => {
   return (
     <>
       <Table
+          scroll={{ x: "max-content" }}
         pagination={false}
         size="small"
         columns={columns}
