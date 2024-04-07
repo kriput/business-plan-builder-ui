@@ -9,7 +9,7 @@ import FinancialOperationOverview, {
 } from "../../base_components/financial_operation/FinancialOperationOverview";
 import { FinancialOperationType } from "../../enums/FinancialOperationType";
 import ErrorResult from "../../base_components/ErrorResult";
-import { INCOME_CATEGORY_LIST } from "./IncomeCategoryListCreator";
+import {INCOME_CATEGORY_LIST, INCOME_FROM_LOANS_LIST} from "./IncomeCategoryListCreator";
 import { FinancialOperationSubtype } from "../../enums/FinancialOperationSubtype";
 import { VAT } from "../../index";
 
@@ -23,13 +23,18 @@ const subTypesNotIncludedForTotal = [
   FinancialOperationSubtype.SALES_INCOME_WITHOUT_TAX,
 ];
 
+const subTypesNotIncludedForVAT = [
+  FinancialOperationSubtype.SALES_INCOME,
+  FinancialOperationSubtype.SALES_INCOME_WITHOUT_TAX,
+    FinancialOperationSubtype.SUBSIDIES,
+    FinancialOperationSubtype.LOAN,
+    FinancialOperationSubtype.INTEREST
+]
+
 export const countVATForPeriodIncome = (incomes: FinancialOperation[], year: number) => {
   const filteredIncomes = incomes.filter(
     (income) =>
-      parseToFinancialOperationSubtype(income.subtype!) !==
-        FinancialOperationSubtype.SALES_INCOME &&
-      parseToFinancialOperationSubtype(income.subtype!) !==
-        FinancialOperationSubtype.SALES_INCOME_WITHOUT_TAX,
+        !subTypesNotIncludedForVAT.includes(parseToFinancialOperationSubtype(income.subtype!))
   );
   let sum = 0;
   for (const income of filteredIncomes) {
@@ -101,38 +106,45 @@ const IncomeContainer = (props: Props) => {
       <Divider />
 
       {getIncomes.isSuccess && (
-        <>
-          <FinancialOperationOverview
-            financialOperationType={FinancialOperationType.INCOME}
-            forecastId={props.forecastId}
-            latestYear={props.latestYear}
-            financialOperations={incomes}
-            financialOperationCategoryList={INCOME_CATEGORY_LIST}
-            title="Laekumised müügist"
-          />
-          <Row>
-            <Col xs={24} xl={20}>
-              <Tag style={{ width: "100%" }} color="red">
-                <h3>Operatsioonidelt makstav käibemaks: </h3>
-                <SimpleTotalPerPeriodTable
-                  addFirstBlank={true}
-                  latestYear={props.latestYear}
-                  financialOperations={incomes}
-                  dataProcessor={countVATForPeriodIncome}
-                />
-              </Tag>
-            </Col>
-          </Row>
-        </>
+          <>
+            <FinancialOperationOverview
+                financialOperationType={FinancialOperationType.INCOME}
+                forecastId={props.forecastId}
+                latestYear={props.latestYear}
+                financialOperations={incomes}
+                financialOperationCategoryList={INCOME_CATEGORY_LIST}
+                title="Laekumised müügist"
+            />
+            <Row>
+              <Col xs={24} xl={20}>
+                <Tag style={{width: "100%"}} color="red">
+                  <h3>Operatsioonidelt makstav käibemaks: </h3>
+                  <SimpleTotalPerPeriodTable
+                      addFirstBlank={true}
+                      latestYear={props.latestYear}
+                      financialOperations={incomes}
+                      dataProcessor={countVATForPeriodIncome}
+                  />
+                </Tag>
+              </Col>
+            </Row>
+            <br/>
+            <FinancialOperationOverview forecastId={props.forecastId}
+                                        latestYear={props.latestYear}
+                                        financialOperations={incomes}
+                                        title={"Laekumised finantseerimistegevusest"}
+                                        financialOperationCategoryList={INCOME_FROM_LOANS_LIST}
+                                        financialOperationType={FinancialOperationType.INCOME}/>
+          </>
       )}
       {getIncomes.isError && (
-        <ErrorResult
-          errorMessage={getIncomes.error.message}
-          buttonMessage={"Proovi uuesti"}
-          onClick={() => getIncomes.refetch()}
-        />
+          <ErrorResult
+              errorMessage={getIncomes.error.message}
+              buttonMessage={"Proovi uuesti"}
+              onClick={() => getIncomes.refetch()}
+          />
       )}
-      {getIncomes.isPending && <Skeleton active />}
+      {getIncomes.isPending && <Skeleton active/>}
     </>
   );
 };

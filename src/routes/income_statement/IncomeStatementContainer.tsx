@@ -7,8 +7,8 @@ import FinancialOperationOverview, {
 } from "../../base_components/financial_operation/FinancialOperationOverview";
 import { FinancialOperationSubtype } from "../../enums/FinancialOperationSubtype";
 import { FinancialOperationType } from "../../enums/FinancialOperationType";
-import { EXPENSE_CATEGORY_LIST } from "../expense/ExpenseCategoryListCreator";
-import { INCOME_CATEGORY_LIST } from "../income/IncomeCategoryListCreator";
+import { ALL_EXPENSE_CATEGORY_LIST } from "../expense/ExpenseCategoryListCreator";
+import { ALL_INCOME_CATEGORY_LIST } from "../income/IncomeCategoryListCreator";
 import SimpleTotalPerPeriodTable from "../../base_components/financial_operation/SimpleTotalPerPeriodTable";
 import { countTotalForAllOperationsPerPeriodIncome } from "../income/IncomeContainer";
 import { countTotalForAllOperationsPerPeriodExpense } from "../expense/ExpenseContainer";
@@ -85,7 +85,7 @@ const IncomeStatementContainer = (props: Props) => {
             (op) => op.type === FinancialOperationType.INCOME,
           ) ?? []
         }
-        financialOperationCategoryList={INCOME_CATEGORY_LIST}
+        financialOperationCategoryList={ALL_INCOME_CATEGORY_LIST}
         title="Laekumised müügist"
       />
       <Row>
@@ -115,7 +115,7 @@ const IncomeStatementContainer = (props: Props) => {
             (op) => op.type === FinancialOperationType.EXPENSE,
           ) ?? []
         }
-        financialOperationCategoryList={EXPENSE_CATEGORY_LIST}
+        financialOperationCategoryList={ALL_EXPENSE_CATEGORY_LIST}
         title="Majandustegevuse käigus tekkivad kulud"
       />
       <Row>

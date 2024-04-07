@@ -1,17 +1,18 @@
-import { useQuery } from "@tanstack/react-query";
-import { FinancialOperationService } from "../../services/FinancialOperationService";
-import { Col, Divider, Row, Skeleton, Tag } from "antd";
-import SimpleTotalPerPeriodTable from "../../base_components/financial_operation/SimpleTotalPerPeriodTable";
-import { getTotalsPerPeriod } from "../forecast/container/FinancialForecastContainer";
+import {useQuery} from "@tanstack/react-query";
+import {FinancialOperationService} from "../../services/FinancialOperationService";
+import {Col, Divider, Row, Skeleton, Tag} from "antd";
+import SimpleTotalPerPeriodTable
+  from "../../base_components/financial_operation/SimpleTotalPerPeriodTable";
+import {getTotalsPerPeriod} from "../forecast/container/FinancialForecastContainer";
 import FinancialOperationOverview, {
   parseToFinancialOperationSubtype
 } from "../../base_components/financial_operation/FinancialOperationOverview";
 import ErrorResult from "../../base_components/ErrorResult";
-import { EXPENSE_CATEGORY_LIST } from "./ExpenseCategoryListCreator";
-import { useState } from "react";
-import { FinancialOperation } from "../../domain/FinancialOperation";
-import { FinancialOperationType } from "../../enums/FinancialOperationType";
-import { VAT } from "../../index";
+import {EXPENSE_CATEGORY_LIST, EXPENSE_FROM_LOANS_LIST} from "./ExpenseCategoryListCreator";
+import {useState} from "react";
+import {FinancialOperation} from "../../domain/FinancialOperation";
+import {FinancialOperationType} from "../../enums/FinancialOperationType";
+import {VAT} from "../../index";
 import {FinancialOperationSubtype} from "../../enums/FinancialOperationSubtype";
 
 interface Props {
@@ -19,13 +20,20 @@ interface Props {
   latestYear: number;
 }
 
+const subTypesNotIncludedForVAT = [
+  FinancialOperationSubtype.SOCIAL_TAX,
+  FinancialOperationSubtype.UNEMPLOYMENT_INSURANCE_TAX,
+  FinancialOperationSubtype.LOAN,
+  FinancialOperationSubtype.INTEREST
+]
+
 export const countVATForPeriodExpense = (
     financialOperations: FinancialOperation[],
     year: number,
 ) => {
+
   const totalForPeriod = getTotalsPerPeriod(financialOperations.filter(exp =>
-      parseToFinancialOperationSubtype(exp.subtype ?? "") !== FinancialOperationSubtype.SOCIAL_TAX &&
-      parseToFinancialOperationSubtype(exp.subtype ?? "") !== FinancialOperationSubtype.UNEMPLOYMENT_INSURANCE_TAX));
+      !subTypesNotIncludedForVAT.includes(parseToFinancialOperationSubtype(exp.subtype!))));
   return (
       totalForPeriod
       .filter((totalPerPeriod) => totalPerPeriod.year === year)
@@ -80,16 +88,16 @@ const ExpenseContainer = (props: Props) => {
         {getExpenses.isSuccess && (
             <>
               <Row>
-              <Col span={24}>
-              <FinancialOperationOverview
-                  financialOperationType={FinancialOperationType.EXPENSE}
-                  forecastId={props.forecastId}
-                  latestYear={props.latestYear}
-                  financialOperations={expenses}
-                  financialOperationCategoryList={EXPENSE_CATEGORY_LIST}
-                  title="Majandustegevuse käigus tekkivad kulud"
-              />
-              </Col>
+                <Col span={24}>
+                  <FinancialOperationOverview
+                      financialOperationType={FinancialOperationType.EXPENSE}
+                      forecastId={props.forecastId}
+                      latestYear={props.latestYear}
+                      financialOperations={expenses}
+                      financialOperationCategoryList={EXPENSE_CATEGORY_LIST}
+                      title="Majandustegevuse käigus tekkivad kulud"
+                  />
+                </Col>
               </Row>
               <Row>
                 <Col xs={24} xl={20}>
@@ -104,17 +112,24 @@ const ExpenseContainer = (props: Props) => {
                   </Tag>
                 </Col>
               </Row>
+              <br/>
+              <FinancialOperationOverview forecastId={props.forecastId}
+                                          latestYear={props.latestYear}
+                                          financialOperations={expenses}
+                                          title={"Kulud finantseerimistegevusest"}
+                                          financialOperationCategoryList={EXPENSE_FROM_LOANS_LIST}
+                                          financialOperationType={FinancialOperationType.EXPENSE} />
+              </>
+              )}
+              {getExpenses.isError && (
+                  <ErrorResult
+                      errorMessage={getExpenses.error.message}
+                      buttonMessage={"Proovi uuesti"}
+                      onClick={() => getExpenses.refetch()}
+                  />
+              )}
+              {getExpenses.isPending && <Skeleton active/>}
             </>
-        )}
-        {getExpenses.isError && (
-            <ErrorResult
-                errorMessage={getExpenses.error.message}
-                buttonMessage={"Proovi uuesti"}
-                onClick={() => getExpenses.refetch()}
-            />
-        )}
-        {getExpenses.isPending && <Skeleton active/>}
-      </>
-  );
-};
-export default ExpenseContainer;
+        );
+        };
+        export default ExpenseContainer;

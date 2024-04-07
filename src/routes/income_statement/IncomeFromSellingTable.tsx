@@ -60,7 +60,7 @@ const IncomeFromSellingTable = (props: Props) => {
 
   return (
       <>
-        <Table scroll={{ x: "max-content" }} size="small" pagination={false} dataSource={getValues()} columns={getColumns()}/>
+        <Table rowKey={Math.random} scroll={{ x: "max-content" }} size="small" pagination={false} dataSource={getValues()} columns={getColumns()}/>
       </>
   );
 };

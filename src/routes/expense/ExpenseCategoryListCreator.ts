@@ -58,3 +58,17 @@ export const EXPENSE_CATEGORY_LIST: FinancialOperationCategory[] = [
     acceptedFinancialOperationSubtypes: [FinancialOperationSubtype.OTHER_TAXES],
   },
 ];
+
+export const EXPENSE_FROM_LOANS_LIST: FinancialOperationCategory[] = [
+  {
+    name: "Laenud ja toetused",
+    icon: "🏦",
+    acceptedFinancialOperationSubtypes: [
+      FinancialOperationSubtype.LOAN,
+      FinancialOperationSubtype.SUBSIDIES,
+      FinancialOperationSubtype.INTEREST
+    ]
+  }
+]
+
+export const ALL_EXPENSE_CATEGORY_LIST: FinancialOperationCategory[] = EXPENSE_CATEGORY_LIST.concat(EXPENSE_FROM_LOANS_LIST)

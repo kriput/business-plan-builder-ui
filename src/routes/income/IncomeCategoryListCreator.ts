@@ -19,3 +19,16 @@ export const INCOME_CATEGORY_LIST: FinancialOperationCategory[] = [
     ],
   },
 ];
+
+export const INCOME_FROM_LOANS_LIST: FinancialOperationCategory[] = [
+  {
+    name: "Laenud ja toetused",
+    icon: "🏦",
+    acceptedFinancialOperationSubtypes: [
+        FinancialOperationSubtype.LOAN,
+        FinancialOperationSubtype.SUBSIDIES
+    ]
+  }
+]
+
+export const ALL_INCOME_CATEGORY_LIST: FinancialOperationCategory[] = INCOME_CATEGORY_LIST.concat(INCOME_FROM_LOANS_LIST)
