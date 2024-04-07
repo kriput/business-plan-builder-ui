@@ -1,11 +1,10 @@
-import { Col, Row, Tabs, TabsProps, Tag } from "antd";
+import { Col, Row, Steps, Tag } from "antd";
 import ProductContainer from "../../product/ProductContainer";
 import { FinancialForecastService } from "../../../services/FinancialForecastService";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import {
   BarChartOutlined,
-  DiffOutlined,
   FallOutlined,
   PieChartOutlined,
   RiseOutlined,
@@ -15,6 +14,7 @@ import { TotalPerPeriod } from "../../../domain/TotalForPeriod";
 import ExpenseContainer from "../../expense/ExpenseContainer";
 import { FinancialOperation } from "../../../domain/FinancialOperation";
 import IncomeStatementContainer from "../../income_statement/IncomeStatementContainer";
+import { useState } from "react";
 
 export const getPercents = (num: number) => {
   return `${num * 100} %`;
@@ -37,8 +37,13 @@ export const getTotalsPerPeriod = (financialOperations: FinancialOperation[]) =>
   financialOperations.map((exp) => exp.totalsPerPeriod).flat() ?? [];
 
 const FinancialForecastContainer = () => {
+  const [current, setCurrent] = useState(0);
   const financialForecastService = new FinancialForecastService();
   const { id } = useParams();
+
+  const onChange = (value: number) => {
+    setCurrent(value);
+  };
 
   const getForecastById = useQuery({
     queryKey: ["loadFinancialForecastById"],
@@ -66,24 +71,27 @@ const FinancialForecastContainer = () => {
     return Math.max(latestFromOperations!, latestFromProducts!);
   };
 
-  const items: TabsProps["items"] = [
+  const items = [
     {
       key: "1",
-      label: (
+      title: (
         <span>
           <PieChartOutlined /> Tooted
         </span>
       ),
-      children: <ProductContainer latestYear={latestYear()} financialForecast={getForecastById.data} />,
+      subTitle: "Alusta siit",
+      description: <span style={{color: "gray", fontSize:"small"}}>Toodete ja teenustega seotud info</span>,
+      content: <ProductContainer latestYear={latestYear()} financialForecast={getForecastById.data} />,
     },
     {
       key: "2",
-      label: (
+      title: (
         <span>
           <RiseOutlined /> Raha sissetulek
         </span>
       ),
-      children: (
+      description: <span style={{color: "gray", fontSize:"small"}}>Tulude info lisamine</span>,
+      content: (
         <IncomeContainer
           latestYear={latestYear()}
           forecastId={getForecastById.data?.id ?? 0}
@@ -92,12 +100,13 @@ const FinancialForecastContainer = () => {
     },
     {
       key: "3",
-      label: (
+      title: (
         <span>
           <FallOutlined /> Raha väljaminek
         </span>
       ),
-      children: (
+      description: <span style={{color: "gray", fontSize:"small"}}>Kulude info lisamine</span>,
+      content: (
         <ExpenseContainer
           latestYear={latestYear()}
           forecastId={getForecastById.data?.id ?? 0}
@@ -106,37 +115,39 @@ const FinancialForecastContainer = () => {
     },
     {
       key: "4",
-      label: (
+      title: (
         <span>
           <BarChartOutlined /> Kasumiaruanne
         </span>
       ),
-      children: <IncomeStatementContainer latestYear={latestYear()} financialForecast={getForecastById.data!}/>,
-    },
-    {
-      key: "5",
-      label: (
-        <span>
-          <DiffOutlined /> Bilanss
-        </span>
-      ),
-      children: <>VARSTI TULEKUL</>,
+      subTitle: "Kokkuvõte",
+      description: <span style={{color: "gray", fontSize:"small"}}>Kõikide operatsioonide ja rahajäägi ülevaade</span>,
+      content: <IncomeStatementContainer latestYear={latestYear()} financialForecast={getForecastById.data!}/>,
     },
   ];
 
   return (
-    <>
-      <Row justify="center">
-        <Col>
-          <h1>
-            <Tag color="blue">
-              <h1>Finantsprognoos: {getForecastById.data?.name} </h1>
-            </Tag>
-          </h1>
-        </Col>
-      </Row>
-        <Tabs defaultActiveKey="1" size="large" items={items} />
-    </>
+      <>
+        <Row justify="center">
+          <Col>
+            <h1>
+              <Tag color="blue">
+                <h1>Finantsprognoos: {getForecastById.data?.name} </h1>
+              </Tag>
+            </h1>
+          </Col>
+        </Row>
+        <Steps
+            type="navigation"
+            current={current}
+            onChange={onChange}
+            className="site-navigation-steps"
+            items={items}
+        />
+        <br/>
+        <div>{items[current].content}</div>
+
+      </>
   );
 };
 
