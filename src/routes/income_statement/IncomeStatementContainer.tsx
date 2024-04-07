@@ -1,5 +1,6 @@
-import React from "react";
-import { Col, Row, Tag } from "antd";
+import React, {useState} from "react";
+import {Button, Col, Row, Space, Tag} from "antd";
+import {DownloadOutlined} from "@ant-design/icons";
 import IncomeFromSellingTable from "./IncomeFromSellingTable";
 import { FinancialForecast } from "../../domain/FinancialForecast";
 import FinancialOperationOverview, {
@@ -48,13 +49,27 @@ const countTotalMoneyLeft = (
 };
 
 const IncomeStatementContainer = (props: Props) => {
+  const [printButtonPressed, setPrintButtonPressed] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   return (
     <>
+
       <Row justify="center">
+        <Space>
         <Col>
           <h2>Kasumiaruanne</h2>
         </Col>
+        <Col>
+          <Button loading={isLoading} onClick={() => {
+            setIsLoading(true)
+            setPrintButtonPressed(!printButtonPressed);
+            setTimeout(() => window.print(), 1500)
+            setTimeout(() => setIsLoading(false), 1200)
+          }}><DownloadOutlined /></Button>
+        </Col>
+        </Space>
       </Row>
+
       <Row>
         <h2>Tulud majandustegevusest</h2>
       </Row>
@@ -77,6 +92,7 @@ const IncomeStatementContainer = (props: Props) => {
       </Row>
       <br />
       <FinancialOperationOverview
+          printButtonPressed={printButtonPressed}
         financialOperationType={null}
         forecastId={props.financialForecast.id ?? 0}
         latestYear={props.latestYear}
@@ -107,6 +123,7 @@ const IncomeStatementContainer = (props: Props) => {
       </Row>
       <br />
       <FinancialOperationOverview
+          printButtonPressed={printButtonPressed}
         financialOperationType={null}
         forecastId={props.financialForecast?.id ?? 0}
         latestYear={props.latestYear}
