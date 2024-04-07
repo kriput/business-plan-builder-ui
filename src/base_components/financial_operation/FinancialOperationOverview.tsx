@@ -32,7 +32,7 @@ export const parseToFinancialOperationSubtype = (name: string) =>
 
 const FinancialOperationOverview = (props: Props) => {
   const [openPanels, setOpenPanels] = useState([] as string[] | string);
-  const [showEmpty, setShowEmpty] = useState(true);
+  const [showEmpty, setShowEmpty] = useState(props.financialOperationType !== null);
 
   const onSwitchChange = (checked: boolean) => setShowEmpty(checked);
 
@@ -159,14 +159,14 @@ const FinancialOperationOverview = (props: Props) => {
               )}
             </ButtonGroup>
           </Col>
-          <Col>
+            {props.financialOperationType !== null && <Col>
             <Switch
                 onChange={onSwitchChange}
                 checkedChildren="Näita tühjad"
                 unCheckedChildren="Peida tühjad"
                 defaultChecked
             />
-          </Col>
+          </Col>}
           </Space>
         </Row>
 
