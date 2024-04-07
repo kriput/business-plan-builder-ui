@@ -19,7 +19,6 @@ const ProductForm = (props: Props) => {
     financialForecastId: props.id,
     tax: 0,
     stockReserveRate: 0,
-    unit: null,
   } as Product);
 
   const handleChange = (target: EventTarget & HTMLInputElement) => {
