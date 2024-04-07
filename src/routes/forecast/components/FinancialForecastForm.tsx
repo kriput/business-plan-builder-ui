@@ -16,8 +16,6 @@ const FinancialForecastForm = () => {
     id: undefined,
     name: "",
     sellingInCreditRate: 0,
-    buildingDeprecationRate: 0,
-    equipmentDeprecationRate: 0,
   } as FinancialForecast);
 
   const handleChange = (target: EventTarget & HTMLInputElement) => {
@@ -104,46 +102,6 @@ const FinancialForecastForm = () => {
                       style={{ width: "5rem" }}
                       onChange={(e) => handleRateInput(e.target)}
                       name="sellingInCreditRate"
-                      placeholder="0"
-                      type="number"
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Hoonete amortisatsiooninorm %"
-                    name="buildingDeprecationRate"
-                    rules={[
-                      {
-                        min: 0,
-                        max: 100,
-                        message: "Number saab olla vahemikus 0 kuni 100",
-                      },
-                    ]}
-                  >
-                    <Input
-                      style={{ width: "5rem" }}
-                      onChange={(e) => handleRateInput(e.target)}
-                      value={input.buildingDeprecationRate}
-                      name="buildingDeprecationRate"
-                      placeholder="0"
-                      type="number"
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Seadmete amortisatsiooninorm %"
-                    name="equipmentDeprecationRate"
-                    rules={[
-                      {
-                        min: 0,
-                        max: 100,
-                        message: "Number saab olla vahemikus 0 kuni 100",
-                      },
-                    ]}
-                  >
-                    <Input
-                      style={{ width: "5rem" }}
-                      onChange={(e) => handleRateInput(e.target)}
-                      value={input.equipmentDeprecationRate}
-                      name="equipmentDeprecationRate"
                       placeholder="0"
                       type="number"
                     />

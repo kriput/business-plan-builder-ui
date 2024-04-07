@@ -5,6 +5,7 @@ import { FinancialForecastService } from "../../../services/FinancialForecastSer
 import ErrorResult from "../../../base_components/ErrorResult";
 import { FieldTimeOutlined, FileTextOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
+import {getPercents} from "../container/FinancialForecastContainer";
 
 const FinancialForecastOverview = () => {
   const tripService = new FinancialForecastService();
@@ -77,18 +78,8 @@ const FinancialForecastOverview = () => {
                       </Link>}
                       description={
                         <>
-                          <div>
                             Krediiti müügi osakaal käibest:{" "}
-                            {(forecast.sellingInCreditRate ?? 0) * 100} %
-                          </div>
-                          <div>
-                            Hoonete amortisatsiooninorm:{" "}
-                            {(forecast.buildingDeprecationRate ?? 0) * 100} %
-                          </div>
-                          <div>
-                            Seadmete amortisatsiooninorm:{" "}
-                            {(forecast.equipmentDeprecationRate ?? 0) * 100} %
-                          </div>
+                            {getPercents(forecast.sellingInCreditRate ?? 0)}
                         </>
                       }
                     />
