@@ -61,14 +61,14 @@ const FinancialOperationCategoryTable = (props: Props) => {
         FinancialOperationSubtype.SALARY
       ) {
         await makeRequest(
-          input.year + 1,
+          input.year,
           financialOperationSubtypeMapping.get(
             FinancialOperationSubtype.SOCIAL_TAX,
           ) as FinancialOperationSubtype,
           input.sum * SOCIAL_TAX,
         );
         await makeRequest(
-          input.year + 1,
+          input.year,
           financialOperationSubtypeMapping.get(
             FinancialOperationSubtype.UNEMPLOYMENT_INSURANCE_TAX,
           ) as FinancialOperationSubtype,
