@@ -19,7 +19,7 @@ interface Props {
   latestYear: number;
 }
 
-const countVATForPeriod = (
+export const countVATForPeriodExpense = (
     financialOperations: FinancialOperation[],
     year: number,
 ) => {
@@ -33,7 +33,7 @@ const countVATForPeriod = (
   );
 };
 
-const countTotalForAllOperationsPerPeriod = (
+export const countTotalForAllOperationsPerPeriodExpense = (
     financialOperations: FinancialOperation[],
     year: number,
 ) => {
@@ -42,7 +42,7 @@ const countTotalForAllOperationsPerPeriod = (
       totalsForPeriod
       .filter((totalPerPeriod) => totalPerPeriod.year === year)
       .reduce((sum, currentValue) => sum + currentValue.sum, 0) +
-      countVATForPeriod(financialOperations, year)
+      countVATForPeriodExpense(financialOperations, year)
   );
 };
 
@@ -69,7 +69,7 @@ const ExpenseContainer = (props: Props) => {
         <Row justify="center">
           <Col>
             <SimpleTotalPerPeriodTable
-                dataProcessor={countTotalForAllOperationsPerPeriod}
+                dataProcessor={countTotalForAllOperationsPerPeriodExpense}
                 financialOperations={expenses}
                 latestYear={props.latestYear}
                 addFirstBlank={false}
@@ -99,7 +99,7 @@ const ExpenseContainer = (props: Props) => {
                         addFirstBlank={true}
                         latestYear={props.latestYear}
                         financialOperations={expenses}
-                        dataProcessor={countVATForPeriod}
+                        dataProcessor={countVATForPeriodExpense}
                     />
                   </Tag>
                 </Col>

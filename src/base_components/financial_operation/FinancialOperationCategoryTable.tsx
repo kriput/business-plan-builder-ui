@@ -23,11 +23,13 @@ import {
   getPrice,
 } from "../../routes/forecast/container/FinancialForecastContainer";
 import { SOCIAL_TAX, UNEMPLOYMENT_INSURANCE_TAX } from "../../index";
+import {FinancialOperationType} from "../../enums/FinancialOperationType";
 
 interface Props {
   forecastId: number;
   financialOperations: FinancialOperation[];
   latestYear: number;
+  financialOperationType: FinancialOperationType | null;
 }
 
 const automaticallyGeneratedFields = [
@@ -134,9 +136,9 @@ const FinancialOperationCategoryTable = (props: Props) => {
         title: <Tag color="geekblue">{i}</Tag>,
         render: (value: FinancialOperation) => (
           <>
-            {automaticallyGeneratedFields.includes(
+            {(automaticallyGeneratedFields.includes(
               parseToFinancialOperationSubtype(value.subtype!),
-            ) && (
+            ) || props.financialOperationType === null)&& (
               <Popconfirm
                 title="Automaatselt genereeritud"
                 description={"Neid andmeid käsitsi muuta ei saa"}
@@ -154,7 +156,7 @@ const FinancialOperationCategoryTable = (props: Props) => {
             )}
             {!automaticallyGeneratedFields.includes(
               parseToFinancialOperationSubtype(value.subtype!),
-            ) && (
+            ) && props.financialOperationType !== null && (
               <Popconfirm
                 title="Muuuda selle assta adnmed"
                 description={

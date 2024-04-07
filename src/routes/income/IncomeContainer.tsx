@@ -23,29 +23,48 @@ const subTypesNotIncludedForTotal = [
   FinancialOperationSubtype.SALES_INCOME_WITHOUT_TAX,
 ];
 
-const countVATForPeriod = (incomes: FinancialOperation[], year: number) => {
-  const filteredIncomes = incomes.filter(income =>
-      parseToFinancialOperationSubtype(income.subtype!) !== FinancialOperationSubtype.SALES_INCOME &&
-      parseToFinancialOperationSubtype(income.subtype!) !== FinancialOperationSubtype.SALES_INCOME_WITHOUT_TAX);
+export const countVATForPeriodIncome = (incomes: FinancialOperation[], year: number) => {
+  const filteredIncomes = incomes.filter(
+    (income) =>
+      parseToFinancialOperationSubtype(income.subtype!) !==
+        FinancialOperationSubtype.SALES_INCOME &&
+      parseToFinancialOperationSubtype(income.subtype!) !==
+        FinancialOperationSubtype.SALES_INCOME_WITHOUT_TAX,
+  );
   let sum = 0;
   for (const income of filteredIncomes) {
     if (!income.tax) {
-      sum += income.totalsPerPeriod.filter(tPP => tPP.year === year).flat().reduce((a, b) => a + b.sum * VAT, 0)
+      sum += income.totalsPerPeriod
+        .filter((tPP) => tPP.year === year)
+        .flat()
+        .reduce((a, b) => a + b.sum * VAT, 0);
     } else {
-      sum += income.totalsPerPeriod.filter(tPP => tPP.year === year).flat().reduce((a, b) => a + b.sum * (income.tax ?? VAT) , 0)
+      sum += income.totalsPerPeriod
+        .filter((tPP) => tPP.year === year)
+        .flat()
+        .reduce((a, b) => a + b.sum * (income.tax ?? VAT), 0);
     }
   }
   return sum;
-}
+};
 
-const countTotalForAllOperationsPerPeriod = (incomes: FinancialOperation[], year: number) => {
-  const total = incomes.filter((income) => !subTypesNotIncludedForTotal.includes(parseToFinancialOperationSubtype(income.subtype!)))
-  .map(income => income.totalsPerPeriod).flat()
-  .filter(tPP => tPP.year === year)
-  .reduce((a, b) => a + b.sum, 0);
-  return total + countVATForPeriod(incomes, year);
-}
-
+export const countTotalForAllOperationsPerPeriodIncome = (
+  incomes: FinancialOperation[],
+  year: number,
+) => {
+  const total = incomes
+    .filter(
+      (income) =>
+        !subTypesNotIncludedForTotal.includes(
+          parseToFinancialOperationSubtype(income.subtype!),
+        ),
+    )
+    .map((income) => income.totalsPerPeriod)
+    .flat()
+    .filter((tPP) => tPP.year === year)
+    .reduce((a, b) => a + b.sum, 0);
+  return total + countVATForPeriodIncome(incomes, year);
+};
 
 const IncomeContainer = (props: Props) => {
   const financialOperationService = new FinancialOperationService();
@@ -72,7 +91,7 @@ const IncomeContainer = (props: Props) => {
       <Row justify="center">
         <Col>
           <SimpleTotalPerPeriodTable
-            dataProcessor={countTotalForAllOperationsPerPeriod}
+            dataProcessor={countTotalForAllOperationsPerPeriodIncome}
             financialOperations={incomes}
             latestYear={props.latestYear}
             addFirstBlank={false}
@@ -99,7 +118,7 @@ const IncomeContainer = (props: Props) => {
                   addFirstBlank={true}
                   latestYear={props.latestYear}
                   financialOperations={incomes}
-                  dataProcessor={countVATForPeriod}
+                  dataProcessor={countVATForPeriodIncome}
                 />
               </Tag>
             </Col>

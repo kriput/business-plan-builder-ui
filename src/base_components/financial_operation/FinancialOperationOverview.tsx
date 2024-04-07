@@ -96,6 +96,7 @@ const FinancialOperationOverview = (props: Props) => {
           children: (
               <>
                 <FinancialOperationCategoryTable
+                    financialOperationType={props.financialOperationType}
                     forecastId={props.forecastId}
                     financialOperations={
                         getFinancialOperationByCategory(
@@ -121,12 +122,12 @@ const FinancialOperationOverview = (props: Props) => {
 
         <Row>
           <Col>
-            <Alert style={{marginBottom: "1rem"}}
+            {props.financialOperationType !== null && <Alert style={{marginBottom: "1rem"}}
                    type="info"
                    message="Aasta andmete muutmiseks klõpsake numbrile. Aasta lisamiseks lisage vastava aasta andmed vähemalt ühe toote alla."
                    closable
                    showIcon
-            />
+            />}
           </Col>
         </Row>
 
