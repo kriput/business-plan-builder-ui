@@ -71,6 +71,9 @@ const FinancialOperationOverview = (props: Props) => {
                   financialOperations={props.financialOperations ?? []}
                   acceptedFinancialOperationSubtypes={
                     financialOperationCategory.acceptedFinancialOperationSubtypes
+                    .filter(opType =>
+                        opType !== FinancialOperationSubtype.UNEMPLOYMENT_INSURANCE_TAX &&
+                        opType !== FinancialOperationSubtype.SOCIAL_TAX)
                   }
                   financialOperationCategory={financialOperationCategory.name}
               />
