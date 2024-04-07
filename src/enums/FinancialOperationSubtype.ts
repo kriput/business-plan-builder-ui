@@ -32,6 +32,10 @@ export enum FinancialOperationSubtype {
   // Other taxes
   OTHER_TAXES = "Muud maksud (riigilõivud jms)",
 
+  // Loans
+  LOAN = "Laenud",
+  INTEREST = "Intressid",
+
 
 
   // INCOMES:
