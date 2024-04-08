@@ -1,4 +1,4 @@
-import { Col, Divider, Row, Skeleton, Tag } from "antd";
+import {Alert, Col, Divider, Row, Skeleton, Tag} from "antd";
 import { useQuery } from "@tanstack/react-query";
 import { FinancialOperationService } from "../../services/FinancialOperationService";
 import { useState } from "react";
@@ -107,6 +107,17 @@ const IncomeContainer = (props: Props) => {
 
       {getIncomes.isSuccess && (
           <>
+            <Row>
+              <Col>
+                <Alert
+                    style={{ marginBottom: "1rem" }}
+                    type="info"
+                    message="Aasta andmete muutmiseks klõpsake numbrile. Aasta lisamiseks lisage vastava aasta andmed vähemalt ühe toote alla."
+                    closable
+                    showIcon
+                />
+              </Col>
+            </Row>
             <FinancialOperationOverview
                 financialOperationType={FinancialOperationType.INCOME}
                 forecastId={props.forecastId}
@@ -128,6 +139,7 @@ const IncomeContainer = (props: Props) => {
                 </Tag>
               </Col>
             </Row>
+            <br/>
             <br/>
             <FinancialOperationOverview forecastId={props.forecastId}
                                         latestYear={props.latestYear}

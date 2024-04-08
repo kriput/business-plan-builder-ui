@@ -1,6 +1,6 @@
 import {useQuery} from "@tanstack/react-query";
 import {FinancialOperationService} from "../../services/FinancialOperationService";
-import {Col, Divider, Row, Skeleton, Tag} from "antd";
+import {Alert, Col, Divider, Row, Skeleton, Tag} from "antd";
 import SimpleTotalPerPeriodTable
   from "../../base_components/financial_operation/SimpleTotalPerPeriodTable";
 import {getTotalsPerPeriod} from "../forecast/container/FinancialForecastContainer";
@@ -88,6 +88,17 @@ const ExpenseContainer = (props: Props) => {
         {getExpenses.isSuccess && (
             <>
               <Row>
+                <Col>
+                  <Alert
+                      style={{ marginBottom: "1rem" }}
+                      type="info"
+                      message="Aasta andmete muutmiseks klõpsake numbrile. Aasta lisamiseks lisage vastava aasta andmed vähemalt ühe toote alla."
+                      closable
+                      showIcon
+                  />
+                </Col>
+              </Row>
+              <Row>
                 <Col span={24}>
                   <FinancialOperationOverview
                       financialOperationType={FinancialOperationType.EXPENSE}
@@ -112,6 +123,7 @@ const ExpenseContainer = (props: Props) => {
                   </Tag>
                 </Col>
               </Row>
+              <br/>
               <br/>
               <FinancialOperationOverview forecastId={props.forecastId}
                                           latestYear={props.latestYear}

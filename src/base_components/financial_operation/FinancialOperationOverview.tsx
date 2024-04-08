@@ -1,23 +1,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import {
-  Alert,
-  Button,
-  Col,
-  Collapse,
-  CollapseProps,
-  Row,
-  Space,
-  Switch,
-  Tag,
-} from "antd";
+import {Button, Col, Collapse, CollapseProps, Row, Space, Switch, Tag,} from "antd";
 import ButtonGroup from "antd/es/button/button-group";
-import { FinancialOperationSubtype } from "../../enums/FinancialOperationSubtype";
-import { useEffect, useState } from "react";
+import {FinancialOperationSubtype} from "../../enums/FinancialOperationSubtype";
+import {useEffect, useState} from "react";
 import FinancialOperationCategoryTable from "./FinancialOperationCategoryTable";
-import { FinancialOperation } from "../../domain/FinancialOperation";
-import { FinancialOperationCategory } from "../../dto/FinancialOperationCategory";
+import {FinancialOperation} from "../../domain/FinancialOperation";
+import {FinancialOperationCategory} from "../../dto/FinancialOperationCategory";
 import FinancialOperationFormModal from "./FinancialOperationFormModal";
-import { FinancialOperationType } from "../../enums/FinancialOperationType";
+import {FinancialOperationType} from "../../enums/FinancialOperationType";
 
 interface Props {
   forecastId: number;
@@ -133,20 +123,6 @@ const FinancialOperationOverview = (props: Props) => {
       <Row>
         <Col>
           <h2>{props.title}</h2>
-        </Col>
-      </Row>
-
-      <Row>
-        <Col>
-          {props.financialOperationType !== null && (
-            <Alert
-              style={{ marginBottom: "1rem" }}
-              type="info"
-              message="Aasta andmete muutmiseks klõpsake numbrile. Aasta lisamiseks lisage vastava aasta andmed vähemalt ühe toote alla."
-              closable
-              showIcon
-            />
-          )}
         </Col>
       </Row>
 
