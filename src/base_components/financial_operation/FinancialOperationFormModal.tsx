@@ -12,6 +12,7 @@ import ErrorResult from "../ErrorResult";
 import { parseToFinancialOperationSubtype } from "./FinancialOperationOverview";
 import { FinancialOperationType } from "../../enums/FinancialOperationType";
 import { CheckOutlined, PlusOutlined } from "@ant-design/icons";
+import {updateAllData} from "../../routes/forecast/container/FinancialForecastContainer";
 
 interface Props {
   forecastId: number;
@@ -47,10 +48,7 @@ const FinancialOperationFormModal = (props: Props) => {
       }
     },
     onSuccess: async () => {
-      await queryClient.refetchQueries({
-        queryKey: ["getExpensesForForecast"],
-      });
-      await queryClient.refetchQueries({ queryKey: ["getIncomesForForecast"] });
+      await updateAllData(queryClient);
       setInput({ ...input, subtype: undefined });
       setShowModal(false);
     },

@@ -7,7 +7,7 @@ import {
   Tag,
   Tooltip,
 } from "antd";
-import { LockOutlined } from "@ant-design/icons";
+import { LockOutlined, DeleteOutlined, StopOutlined } from "@ant-design/icons";
 import { FinancialOperation } from "../../domain/FinancialOperation";
 import { useState } from "react";
 import {
@@ -21,9 +21,10 @@ import {
   addNewTotalPerPeriod,
   getPercents,
   getPrice,
+  updateAllData,
 } from "../../routes/forecast/container/FinancialForecastContainer";
 import { SOCIAL_TAX, UNEMPLOYMENT_INSURANCE_TAX } from "../../index";
-import {FinancialOperationType} from "../../enums/FinancialOperationType";
+import { FinancialOperationType } from "../../enums/FinancialOperationType";
 
 interface Props {
   forecastId: number;
@@ -78,15 +79,20 @@ const FinancialOperationCategoryTable = (props: Props) => {
       return await makeRequest(input.year, input.subtype, input.sum);
     },
     onSuccess: async () => {
-      await queryClient.refetchQueries({
-        queryKey: ["getExpensesForForecast"],
-      });
-      await queryClient.refetchQueries({ queryKey: ["getIncomesForForecast"] });
+      await updateAllData(queryClient);
     },
     onError: (error) => {
       console.log(error);
       messageApi.error("Andmete muutmine ebaõnnestus! " + error.message);
     },
+  });
+
+  const deleteOperation = useMutation({
+    mutationFn: async (operationId: number) => {
+      await financialOperationService.delete(operationId.toString());
+    },
+    onSuccess: async () => await updateAllData(queryClient),
+    onError: (e) => messageApi.error("Kustutamine ebaõnnestus: " + e.message),
   });
 
   const makeRequest = async (
@@ -138,7 +144,8 @@ const FinancialOperationCategoryTable = (props: Props) => {
           <>
             {(automaticallyGeneratedFields.includes(
               parseToFinancialOperationSubtype(value.subtype!),
-            ) || props.financialOperationType === null)&& (
+            ) ||
+              props.financialOperationType === null) && (
               <Popconfirm
                 title="Automaatselt genereeritud"
                 description={"Neid andmeid käsitsi muuta ei saa"}
@@ -156,43 +163,66 @@ const FinancialOperationCategoryTable = (props: Props) => {
             )}
             {!automaticallyGeneratedFields.includes(
               parseToFinancialOperationSubtype(value.subtype!),
-            ) && props.financialOperationType !== null && (
-              <Popconfirm
-                title="Muuuda selle assta adnmed"
-                description={
-                  <>
-                    <InputNumber
-                      controls={false}
-                      type="number"
-                      onChange={(e) => setValueInput(e ?? 0)}
-                      style={{ width: "6rem" }}
-                      value={valueInput}
-                    />{" "}
-                    €
-                  </>
-                }
-                okText="Jah"
-                cancelText="Ei"
-                onCancel={addFinancialOperation.reset}
-                onConfirm={() =>
-                  addFinancialOperation.mutate({
-                    year: i,
-                    subtype: value.subtype!,
-                    sum: valueInput,
-                  })
-                }
-              >
-                <span style={{ cursor: "pointer" }}>
-                  {getPrice(
-                    value.totalsPerPeriod.find((exp) => exp.year === i)?.sum ??
-                      0,
-                  )}
-                </span>
-              </Popconfirm>
-            )}
+            ) &&
+              props.financialOperationType !== null && (
+                <Popconfirm
+                  title="Muuuda selle assta adnmed"
+                  description={
+                    <>
+                      <InputNumber
+                        controls={false}
+                        type="number"
+                        onChange={(e) => setValueInput(e ?? 0)}
+                        style={{ width: "6rem" }}
+                        value={valueInput}
+                      />{" "}
+                      €
+                    </>
+                  }
+                  okText="Jah"
+                  cancelText="Ei"
+                  onCancel={addFinancialOperation.reset}
+                  onConfirm={() =>
+                    addFinancialOperation.mutate({
+                      year: i,
+                      subtype: value.subtype!,
+                      sum: valueInput,
+                    })
+                  }
+                >
+                  <span style={{ cursor: "pointer" }}>
+                    {getPrice(
+                      value.totalsPerPeriod.find((exp) => exp.year === i)
+                        ?.sum ?? 0,
+                    )}
+                  </span>
+                </Popconfirm>
+              )}
             {contextHolder}
           </>
         ),
+      });
+    }
+    if (props.financialOperationType !== null) {
+      tableProps?.push({
+        title: "",
+        fixed: "right",
+        width: "1rem",
+        render: (value: FinancialOperation) =>
+            !automaticallyGeneratedFields.includes(
+                parseToFinancialOperationSubtype(value.subtype!),
+            ) ? (
+                <DeleteOutlined
+                    className={"delete"}
+                    onClick={() => deleteOperation.mutate(value.id ?? 0)}
+                />
+            ) : (
+                <>
+                  <Tooltip
+                      title="Automaatselt genereeritud andmed ei saa kustutada käsitsi"><StopOutlined
+                      style={{color: "green"}}/></Tooltip>
+                </>
+            ),
       });
     }
     return tableProps;

@@ -2,3 +2,9 @@
   position: fixed;
   bottom: 0;
 }
+
+.delete {
+  color: red;
+  font-size: large;
+  cursor: pointer;
+}

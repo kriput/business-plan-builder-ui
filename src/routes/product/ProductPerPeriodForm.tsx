@@ -179,7 +179,7 @@ const ProductPerPeriodForm = (props: Props) => {
       return await productService.add(product, `/add`);
     },
     onSuccess: async () => {
-      await queryClient.refetchQueries({
+      await queryClient.invalidateQueries({
         queryKey: ["loadFinancialForecastById"],
       });
       props.setIsFormOpen(false);

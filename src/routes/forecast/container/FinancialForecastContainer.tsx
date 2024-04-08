@@ -2,7 +2,7 @@ import { Col, Row, Steps, Tag } from "antd";
 import ProductContainer from "../../product/ProductContainer";
 import { FinancialForecastService } from "../../../services/FinancialForecastService";
 import { useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { QueryClient, useQuery } from "@tanstack/react-query";
 import {
   BarChartOutlined,
   FallOutlined,
@@ -15,6 +15,14 @@ import ExpenseContainer from "../../expense/ExpenseContainer";
 import { FinancialOperation } from "../../../domain/FinancialOperation";
 import IncomeStatementContainer from "../../income_statement/IncomeStatementContainer";
 import { useState } from "react";
+
+export const updateAllData = async (queryClient: QueryClient) => {
+  await queryClient.invalidateQueries({
+    queryKey: ["loadFinancialForecastById"],
+  });
+  await queryClient.invalidateQueries({ queryKey: ["getExpensesForForecast"] });
+  await queryClient.invalidateQueries({ queryKey: ["getIncomesForForecast"] });
+};
 
 export const getPercents = (num: number) => {
   return `${num * 100} %`;

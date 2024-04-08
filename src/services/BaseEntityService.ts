@@ -34,4 +34,17 @@ export abstract class BaseEntityService<TEntity extends BaseEntity> extends Base
       throw Error(e.response?.data?.message ?? e.message ?? 'Unknown error');
     }
   }
+
+  async delete(id: string, url=""): Promise<void> {
+    try {
+      const response = await this.axios.delete<void>(`${url}/${id}`);
+      if (response.status !== 200) {
+        return Promise.reject(response.statusText);
+      }
+    } catch (e: any) {
+      console.log("error", e);
+      throw Error(e.response?.data?.message ?? e.message ?? 'Unknown error');
+    }
+
+  }
 }
