@@ -1,27 +1,60 @@
 import { FinancialForecast } from "../../../domain/FinancialForecast";
-import { Button, Col, Divider, Empty, List, Row, Skeleton } from "antd";
-import { useQuery, UseQueryResult } from "@tanstack/react-query";
+import {
+  Button,
+  Col,
+  Divider,
+  Empty,
+  List,
+  message,
+  Row,
+  Skeleton,
+  Space,
+} from "antd";
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+  UseQueryResult,
+} from "@tanstack/react-query";
 import { FinancialForecastService } from "../../../services/FinancialForecastService";
 import ErrorResult from "../../../base_components/ErrorResult";
-import { FieldTimeOutlined, FileTextOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  FieldTimeOutlined,
+  FileTextOutlined,
+} from "@ant-design/icons";
 import { Link } from "react-router-dom";
-import {getPercents} from "../container/FinancialForecastContainer";
+import { getPercents } from "../container/FinancialForecastContainer";
 
 const FinancialForecastOverview = () => {
-  const tripService = new FinancialForecastService();
+  const financialForecastService = new FinancialForecastService();
+  const queryClient = useQueryClient();
+  const [messageApi, contextHolder] = message.useMessage();
 
   const getForecasts: UseQueryResult<FinancialForecast[], Error> = useQuery({
     queryKey: ["loadAllFinancialForecasts"],
     queryFn: async () => {
-      return (await tripService
+      return (await financialForecastService
         .getAll("")
         .then((list) => list?.reverse())) as FinancialForecast[];
     },
     retry: 0,
   });
 
+  const deleteFinancialForecast = useMutation({
+    mutationFn: async (id: number) => {
+      await financialForecastService.delete(id.toString());
+    },
+    onSuccess: async () =>
+      await queryClient.invalidateQueries({
+        queryKey: ["loadAllFinancialForecasts"],
+      }),
+    onError: (e) => messageApi.error("Kustutamine ebaõnnestus: " + e.message),
+  });
+
   return (
     <>
+      {contextHolder}
       <Row justify="center">
         <Col>
           <h1> Finatsprognooside ülevaade </h1>
@@ -73,17 +106,35 @@ const FinancialForecastOverview = () => {
                         </h3>
                       }
                       title={
-                      <Link to={`/forecasts/${forecast.id}`}>
-                        <h3>{forecast.name}</h3>
-                      </Link>}
+                        <Link to={`/forecasts/${forecast.id}`}>
+                          <h3>{forecast.name}</h3>
+                        </Link>
+                      }
                       description={
                         <>
-                            Krediiti müügi osakaal käibest:{" "}
-                            {getPercents(forecast.sellingInCreditRate ?? 0)}
+                          Krediiti müügi osakaal käibest:{" "}
+                          {getPercents(forecast.sellingInCreditRate ?? 0)}
                         </>
                       }
                     />
-                    <Link to={`/forecasts/${forecast.id}`}>Ava prognoos</Link>
+                    <Row>
+                      <Space>
+                        <Col>
+                          <Link to={`/forecasts/${forecast.id}`}>
+                            <Button>Ava</Button>
+                          </Link>
+                        </Col>
+                        <Col>|</Col>
+                        <Col>
+                          <DeleteOutlined
+                            className={"delete"}
+                            onClick={() =>
+                              deleteFinancialForecast.mutate(forecast.id ?? 0)
+                            }
+                          />
+                        </Col>
+                      </Space>
+                    </Row>
                   </List.Item>
                 )}
               />
