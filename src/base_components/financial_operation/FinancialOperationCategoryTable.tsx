@@ -1,6 +1,6 @@
 import {
   InputNumber,
-  message,
+  message, Modal,
   Popconfirm,
   Table,
   TableProps,
@@ -25,6 +25,7 @@ import {
 } from "../../routes/forecast/container/FinancialForecastContainer";
 import { SOCIAL_TAX, UNEMPLOYMENT_INSURANCE_TAX } from "../../index";
 import { FinancialOperationType } from "../../enums/FinancialOperationType";
+import {FINANCIAL_OPERATION_SUBTYPE_INFO} from "../../routes/expense/ExpenseSubtypeInfo";
 
 interface Props {
   forecastId: number;
@@ -52,6 +53,7 @@ const FinancialOperationCategoryTable = (props: Props) => {
   const [valueInput, setValueInput] = useState(0);
   const [messageApi, contextHolder] = message.useMessage();
   const queryClient = useQueryClient();
+  const [modal, context] = Modal.useModal();
 
   const financialOperationService = new FinancialOperationService();
 
@@ -148,10 +150,14 @@ const FinancialOperationCategoryTable = (props: Props) => {
               props.financialOperationType === null) && (
               <Popconfirm
                 title="Automaatselt genereeritud"
-                description={"Neid andmeid käsitsi muuta ei saa"}
+                description="Neid andmeid käsitsi muuta ei saa"
                 okText="Sulge"
                 cancelText="Kust andmed tulevad?"
-                cancelButtonProps={{ disabled: true }}
+                cancelButtonProps={{disabled: !FINANCIAL_OPERATION_SUBTYPE_INFO.has(parseToFinancialOperationSubtype(value.subtype ?? ""))}}
+                onCancel={() => modal.info({
+                  title: 'Lisainfo',
+                  content: FINANCIAL_OPERATION_SUBTYPE_INFO.get(parseToFinancialOperationSubtype(value.subtype ?? ""))
+                })}
               >
                 <span style={{ cursor: "pointer" }}>
                   {getPrice(
@@ -199,6 +205,7 @@ const FinancialOperationCategoryTable = (props: Props) => {
                 </Popconfirm>
               )}
             {contextHolder}
+            {context}
           </>
         ),
       });
