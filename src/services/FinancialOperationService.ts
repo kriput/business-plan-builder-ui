@@ -55,4 +55,16 @@ export class FinancialOperationService extends BaseEntityService<FinancialOperat
       throw Error(e.message);
     }
   }
+
+  async deleteOperation(data: FinancialOperation, url: string = ""): Promise<void> {
+    try {
+      const response = await this.axios.post<FinancialOperation>(url, data);
+      if (response.status !== 200) {
+        return Promise.reject(response.statusText);
+      }
+    } catch (e: any) {
+      console.log("error", e);
+      throw Error(e.response?.data?.message ?? e.message ?? 'Unknown error');
+    }
+  }
 }

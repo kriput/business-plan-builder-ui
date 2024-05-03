@@ -39,7 +39,6 @@ export enum FinancialOperationSubtype {
 
 
   // INCOMES:
-  // Sells
   SALES_INCOME = 'Laekumine müügist arvestades krediiti müüki',
   SALES_INCOME_WITH_TAX = 'Maksustatav müügitulu',
   SALES_INCOME_WITHOUT_TAX = '0% määraga maksustatav müügitulu (nt. eksport)',

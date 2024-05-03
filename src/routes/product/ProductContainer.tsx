@@ -6,22 +6,69 @@ import {
   Collapse,
   CollapseProps,
   Divider,
-  Empty,
+  Empty, message,
   Row,
 } from "antd";
-import { getPercents } from "../forecast/container/FinancialForecastContainer";
+import {getPercents, updateAllData} from "../forecast/container/FinancialForecastContainer";
 import { useEffect, useState } from "react";
 import ProductForm from "./ProductForm";
 import ProductPerPeriodTable from "./ProductPerPeriodTable";
 import ProductOverview from "./ProductOverview";
+import {DeleteOutlined} from "@ant-design/icons";
+import {useMutation, useQueryClient} from "@tanstack/react-query";
+import {ProductPerPeriod} from "../../domain/ProductPerPeriod";
+import {saveExpensesForProduct, saveIncomesForProduct} from "./ProductPerPeriodForm";
+import {Product} from "../../domain/Product";
+import {ProductService} from "../../services/ProductService";
 
 interface Props {
   financialForecast: FinancialForecast | undefined;
   latestYear: number
 }
 
+export interface InputData {
+  product: Product;
+  productPerPeriod: ProductPerPeriod;
+  sellingInCreditRate: number
+}
+
 const ProductContainer = (props: Props) => {
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const productService = new ProductService();
+  const [messageApi, contextHolder] = message.useMessage();
+  const queryClient = useQueryClient();
+
+  const deleteProduct = useMutation({
+    mutationFn: async (product: Product) => {
+      if (product.productsPerPeriod.length > 0) {
+        messageApi.error("Viga! Alguses tuleb kustutada toote andmed!")
+        return ;
+      }
+      return await productService.delete(product.id?.toString() ?? "0");
+    },
+    onSuccess: async () => updateAllData(queryClient),
+    onError: (e) => messageApi.error("Viga kustutamisel !" + e),
+  })
+
+  const deleteProductPerPeriod = useMutation({
+    mutationFn: async (inputData: InputData) => {
+      await saveExpensesForProduct(inputData.productPerPeriod, inputData.product!, "delete");
+      await saveIncomesForProduct(
+          inputData.productPerPeriod,
+          inputData.product!,
+          inputData.sellingInCreditRate,
+          "delete",
+      );
+      const index =
+          inputData.product?.productsPerPeriod.indexOf(inputData.productPerPeriod) ?? -1;
+      if (index > -1) {
+        inputData.product?.productsPerPeriod.splice(index, 1);
+      }
+      return await productService.add(inputData.product!, "/add");
+    },
+    onSuccess: async () => updateAllData(queryClient),
+    onError: (e) => messageApi.error("Viga kustutamisel !" + e),
+  });
 
   const items: CollapseProps["items"] = props.financialForecast?.products
     ?.reverse()
@@ -41,12 +88,13 @@ const ProductContainer = (props: Props) => {
                 />
               </Col>
               <Col>
-                <Badge
-                  color="purple"
-                  count={
-                    "Materjali/kauba keskmine laovaru vajadus: " +
-                    getPercents(product.stockReserveRate)
-                  }
+                <DeleteOutlined
+                  className={"delete"}
+                  style={{ marginTop: "3px" }}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    deleteProduct.mutate(product);
+                  }}
                 />
               </Col>
             </Row>
@@ -54,6 +102,7 @@ const ProductContainer = (props: Props) => {
         ),
         children: (
           <ProductPerPeriodTable
+            deleteProductPerPeriod={deleteProductPerPeriod.mutate}
             sellingInCreditRate={
               props.financialForecast?.sellingInCreditRate ?? 0
             }
@@ -67,6 +116,7 @@ const ProductContainer = (props: Props) => {
 
   return (
     <>
+      {contextHolder}
       <Row justify="center">
         <h2>Toodete ülevaade</h2>
       </Row>
