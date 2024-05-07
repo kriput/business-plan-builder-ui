@@ -1,8 +1,16 @@
 import { useMutation, UseMutationResult } from "@tanstack/react-query";
 import { FinancialForecastService } from "../../../services/FinancialForecastService";
 import { FinancialForecast } from "../../../domain/FinancialForecast";
-import { Button, Col, Divider, Form, Input, Modal, Row } from "antd";
-import { useState } from "react";
+import {
+  Button,
+  Col,
+  Divider,
+  Form,
+  Input,
+  InputNumber,
+  Modal,
+  Row,
+} from "antd";
 import { useNavigate } from "react-router-dom";
 import ErrorResult from "../../../base_components/ErrorResult";
 import { CheckCircleOutlined } from "@ant-design/icons";
@@ -12,21 +20,15 @@ const FinancialForecastForm = () => {
   const [modal, contextHolder] = Modal.useModal();
   const navigate = useNavigate();
   const [form] = Form.useForm();
-  const [input, setInput] = useState({
-    id: undefined,
-    name: "",
-    sellingInCreditRate: 0,
-  } as FinancialForecast);
 
-  const handleChange = (target: EventTarget & HTMLInputElement) => {
-    setInput({ ...input, [target.name]: target.value });
-  };
+  const onSubmit = () => {
+    const forecast = {
+      id: undefined,
+      name: form.getFieldValue("name"),
+      sellingInCreditRate: form.getFieldValue("sellingInCreditRate"),
+    } as FinancialForecast;
 
-  const handleRateInput = (target: EventTarget & HTMLInputElement) => {
-    if (target.value) {
-      const dividedNumber = parseFloat(target.value) / 100 || 0;
-      setInput({ ...input, [target.name]: dividedNumber });
-    }
+    createFinancialForecast.mutate(forecast);
   };
 
   const createFinancialForecast: UseMutationResult<
@@ -71,7 +73,14 @@ const FinancialForecastForm = () => {
       {!createFinancialForecast.isError &&
         !createFinancialForecast.isSuccess && (
           <>
-            <Form name="create_forecast" form={form} layout="vertical">
+            {contextHolder}
+            <Form
+              size="large"
+              name="create_forecast"
+              form={form}
+              onFinish={onSubmit}
+              layout="vertical"
+            >
               <Row justify="center">
                 <Col span="8">
                   <Form.Item
@@ -81,11 +90,7 @@ const FinancialForecastForm = () => {
                       { required: true, message: "Palun sisestage nimi" },
                     ]}
                   >
-                    <Input
-                      onChange={(e) => handleChange(e.target)}
-                      value={input.name}
-                      name="name"
-                    />
+                    <Input name="name" />
                   </Form.Item>
                   <Form.Item
                     label="Krediiti müügi osakaal käibest %"
@@ -93,14 +98,14 @@ const FinancialForecastForm = () => {
                     rules={[
                       {
                         message: "Number saab olla vahemikus 0 kuni 100",
+                        type: "number",
                         min: 0,
                         max: 100,
                       },
                     ]}
                   >
-                    <Input
+                    <InputNumber
                       style={{ width: "5rem" }}
-                      onChange={(e) => handleRateInput(e.target)}
                       name="sellingInCreditRate"
                       placeholder="0"
                       type="number"
@@ -108,29 +113,26 @@ const FinancialForecastForm = () => {
                   </Form.Item>
                 </Col>
               </Row>
-            </Form>
-            <Row>
-              <Col span="8" />
-              <Col span="8">
-                <br />
-                <Button
+
+              <Row>
+                <Col span="8" />
+                <Col span="8">
+                  <br />
+                  <Button
+                    htmlType="submit"
                     loading={
-                        createFinancialForecast.isPending ||
-                        createFinancialForecast.isSuccess
+                      createFinancialForecast.isPending ||
+                      createFinancialForecast.isSuccess
                     }
                     type="primary"
-                    onClick={() => createFinancialForecast.mutate(input)}
-                >
-                  Salvesta
-                </Button>
-                <Row>
-                  <Col span={12}>{contextHolder}</Col>
-                </Row>
-              </Col>
-            </Row>
+                  >
+                    Salvesta
+                  </Button>
+                </Col>
+              </Row>
+            </Form>
           </>
         )}
-
     </>
   );
 };
