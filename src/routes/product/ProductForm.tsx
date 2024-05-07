@@ -4,6 +4,7 @@ import { Product } from "../../domain/Product";
 import {useMutation, UseMutationResult, useQueryClient} from "@tanstack/react-query";
 import { ProductService } from "../../services/ProductService";
 import ErrorResult from "../../base_components/ErrorResult";
+import {QuestionCircleOutlined} from "@ant-design/icons"
 
 interface Props {
   id: number | undefined;
@@ -93,7 +94,7 @@ const ProductForm = (props: Props) => {
             />
           </Form.Item>
           <Form.Item
-            label="Materjali / kauba laovaru vajadus %"
+            label="Materjali / kauba laovaru vajadus % "
             name="stockReserveRate"
             rules={[
               {
@@ -103,8 +104,12 @@ const ProductForm = (props: Props) => {
               },
             ]}
           >
+            <QuestionCircleOutlined style={{color: "blue"}} onClick={() => modal.info({
+              title: 'Lisainfo',
+              content: 'Toote valmistamiseks vajava kauba/materjali ülejääk järgmiseks perioodiks (see summa arvutatakse välja järgmise perioodi materjali kuludest)'
+            })}/>
             <Input
-              style={{ width: "5rem" }}
+              style={{ width: "5rem", marginLeft: "0.5rem" }}
               onChange={(e) => handleRateInput(e.target)}
               name="stockReserveRate"
               placeholder="0"

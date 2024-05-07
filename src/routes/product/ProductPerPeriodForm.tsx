@@ -1,5 +1,5 @@
 import ErrorResult from "../../base_components/ErrorResult";
-import {Button, Form, Input, message, Row, Select} from "antd";
+import {Button, Form, Input, message, Modal, Row, Select} from "antd";
 import React, { useState } from "react";
 import {
   useMutation,
@@ -16,6 +16,7 @@ import {
   FinancialOperationSubtype,
   financialOperationSubtypeMapping,
 } from "../../enums/FinancialOperationSubtype";
+import {QuestionCircleOutlined} from "@ant-design/icons";
 
 interface Props {
   sellingInCreditRate: number;
@@ -159,6 +160,7 @@ const ProductPerPeriodForm = (props: Props) => {
   const [, contextHolder] = message.useMessage();
   const productService = new ProductService();
   const queryClient = useQueryClient();
+  const [modal, context] = Modal.useModal();
   const [input, setInput] = useState({
     quantity: 0,
     forExport: 0,
@@ -232,6 +234,7 @@ const ProductPerPeriodForm = (props: Props) => {
   return (
     <>
       {contextHolder}
+      {context}
       {addProduct.isError && (
         <ErrorResult
           errorMessage={`Salvestamine ebaõnnestus. ${addProduct.error.message}`}
@@ -308,8 +311,15 @@ const ProductPerPeriodForm = (props: Props) => {
                 },
               ]}
             >
+              <QuestionCircleOutlined style={{color: "blue"}} onClick={() => modal.info({
+                title: 'Lisainfo',
+                content: <><div>Mitu % toodetest läheb ekspordiks ehk on müüdud teistes riikides.</div>
+                  <br/>
+                  <b>Selliste toodete puhul on käibemaksumäär 0%.</b>
+                </>
+              })}/>
               <Input
-                style={{ width: "8rem", marginBottom: "1rem" }}
+                style={{ width: "8rem", marginBottom: "1rem", marginLeft: "0.5rem" }}
                 onChange={(e) => handleRateInput(e.target)}
                 name="forExport"
                 placeholder="0"
