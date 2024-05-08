@@ -8,7 +8,7 @@ import {
 } from "@tanstack/react-query";
 import { ProductService } from "../../services/ProductService";
 import ErrorResult from "../../base_components/ErrorResult";
-import { QuestionCircleOutlined } from "@ant-design/icons";
+import AdditionalInfo from "../../base_components/AdditionalInfo";
 
 interface Props {
   id: number | undefined;
@@ -71,7 +71,7 @@ const ProductForm = (props: Props) => {
               name="name"
               rules={[{ required: true, message: "Palun sisestage nimi" }]}
             >
-              <Input name="name" placeholder="Minu toode"/>
+              <Input name="name" placeholder="Minu toode" />
             </Form.Item>
 
             <Form.Item<number>
@@ -105,22 +105,19 @@ const ProductForm = (props: Props) => {
                 },
               ]}
             >
-              <QuestionCircleOutlined
-                style={{ color: "blue" }}
-                onClick={() =>
-                  modal.info({
-                    title: "Lisainfo",
-                    content:
-                      "Toote valmistamiseks vajava kauba/materjali ülejääk järgmiseks perioodiks (see summa arvutatakse välja järgmise perioodi materjali kuludest)",
-                  })
-                }
-              />
-              <Input
-                type="number"
-                style={{ width: "5rem", marginLeft: "0.5rem" }}
-                name="stockReserveRate"
-                placeholder="0%"
-              />
+              <span>
+                <AdditionalInfo
+                  info={
+                    "Toote valmistamiseks vajava kauba/materjali ülejääk järgmiseks perioodiks (see summa arvutatakse välja järgmise perioodi materjali kuludest)"
+                  }
+                />
+                <Input
+                  type="number"
+                  style={{ width: "5rem", }}
+                  name="stockReserveRate"
+                  placeholder="0%"
+                />
+              </span>
             </Form.Item>
             <Form.Item>
               <Button

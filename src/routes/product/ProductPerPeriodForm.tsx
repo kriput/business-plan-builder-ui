@@ -1,13 +1,5 @@
 import ErrorResult from "../../base_components/ErrorResult";
-import {
-  Button,
-  Form,
-  InputNumber,
-  message,
-  Modal,
-  Select,
-  Space,
-} from "antd";
+import { Button, Form, InputNumber, message, Select, Space } from "antd";
 import React from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Product } from "../../domain/Product";
@@ -20,7 +12,7 @@ import {
   FinancialOperationSubtype,
   financialOperationSubtypeMapping,
 } from "../../enums/FinancialOperationSubtype";
-import { QuestionCircleOutlined } from "@ant-design/icons";
+import AdditionalInfo from "../../base_components/AdditionalInfo";
 
 interface Props {
   sellingInCreditRate: number;
@@ -163,7 +155,6 @@ const ProductPerPeriodForm = (props: Props) => {
   const [, contextHolder] = message.useMessage();
   const productService = new ProductService();
   const queryClient = useQueryClient();
-  const [modal, context] = Modal.useModal();
 
   const onSubmit = () => {
     const productPerPeriod = {
@@ -223,7 +214,6 @@ const ProductPerPeriodForm = (props: Props) => {
   return (
     <>
       {contextHolder}
-      {context}
       {addProduct.isError && (
         <ErrorResult
           errorMessage={`Salvestamine ebaõnnestus. ${addProduct.error.message}`}
@@ -240,7 +230,11 @@ const ProductPerPeriodForm = (props: Props) => {
             labelCol={{ span: 12 }}
           >
             <Form.Item<string> label={<h4>Lisa andmed aastaks</h4>} name="year">
-              <Select style={{ width: "5rem" }} options={getOptions()} placeholder="Aasta"/>
+              <Select
+                style={{ width: "5rem" }}
+                options={getOptions()}
+                placeholder="Aasta"
+              />
             </Form.Item>
 
             <Form.Item<number>
@@ -328,22 +322,16 @@ const ProductPerPeriodForm = (props: Props) => {
               label={
                 <>
                   Tooteid ekspordiks %{" "}
-                  <QuestionCircleOutlined
-                    style={{ color: "blue" }}
-                    onClick={() =>
-                      modal.info({
-                        title: "Lisainfo",
-                        content: (
-                          <>
-                            <div>
-                              Mitu % toodetest läheb ekspordiks ehk on müüdud
-                              teistes riikides.
-                            </div>
-                            <br />
-                            <b>Selliste toodete puhul on käibemaksumäär 0%.</b>
-                          </>
-                        ),
-                      })
+                  <AdditionalInfo
+                    info={
+                      <>
+                        <div>
+                          Mitu % toodetest läheb ekspordiks ehk on müüdud
+                          teistes riikides.
+                        </div>
+                        <br />
+                        <b>Selliste toodete puhul on käibemaksumäär 0%.</b>
+                      </>
                     }
                   />
                 </>

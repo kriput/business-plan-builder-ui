@@ -12,3 +12,8 @@
 .number-input {
   width: 8rem;
 }
+
+.info {
+  color: blue;
+  margin-right: 0.5rem;
+}
