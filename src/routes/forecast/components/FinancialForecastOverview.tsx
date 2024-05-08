@@ -18,13 +18,10 @@ import {
 } from "@tanstack/react-query";
 import { FinancialForecastService } from "../../../services/FinancialForecastService";
 import ErrorResult from "../../../base_components/ErrorResult";
-import {
-  DeleteOutlined,
-  FieldTimeOutlined,
-  FileTextOutlined,
-} from "@ant-design/icons";
+import { FieldTimeOutlined, FileTextOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import { getPercents } from "../container/FinancialForecastContainer";
+import ConfirmDelete from "../../../base_components/ConfirmDelete";
 
 const FinancialForecastOverview = () => {
   const financialForecastService = new FinancialForecastService();
@@ -126,9 +123,8 @@ const FinancialForecastOverview = () => {
                         </Col>
                         <Col>|</Col>
                         <Col>
-                          <DeleteOutlined
-                            className={"delete"}
-                            onClick={() =>
+                          <ConfirmDelete
+                            onConfirm={() =>
                               deleteFinancialForecast.mutate(forecast.id ?? 0)
                             }
                           />

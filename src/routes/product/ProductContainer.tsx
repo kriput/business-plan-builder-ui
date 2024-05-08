@@ -6,24 +6,31 @@ import {
   Collapse,
   CollapseProps,
   Divider,
-  Empty, message,
+  Empty,
+  message,
   Row,
 } from "antd";
-import {getPercents, updateAllData} from "../forecast/container/FinancialForecastContainer";
+import {
+  getPercents,
+  updateAllData,
+} from "../forecast/container/FinancialForecastContainer";
 import { useEffect, useState } from "react";
 import ProductForm from "./ProductForm";
 import ProductPerPeriodTable from "./ProductPerPeriodTable";
 import ProductOverview from "./ProductOverview";
-import {DeleteOutlined} from "@ant-design/icons";
-import {useMutation, useQueryClient} from "@tanstack/react-query";
-import {ProductPerPeriod} from "../../domain/ProductPerPeriod";
-import {saveExpensesForProduct, saveIncomesForProduct} from "./ProductPerPeriodForm";
-import {Product} from "../../domain/Product";
-import {ProductService} from "../../services/ProductService";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { ProductPerPeriod } from "../../domain/ProductPerPeriod";
+import {
+  saveExpensesForProduct,
+  saveIncomesForProduct,
+} from "./ProductPerPeriodForm";
+import { Product } from "../../domain/Product";
+import { ProductService } from "../../services/ProductService";
+import ConfirmDelete from "../../base_components/ConfirmDelete";
 
 interface Props {
   financialForecast: FinancialForecast | undefined;
-  latestYear: number
+  latestYear: number;
 }
 
 export interface InputData {
@@ -88,14 +95,7 @@ const ProductContainer = (props: Props) => {
                 />
               </Col>
               <Col>
-                <DeleteOutlined
-                  className={"delete"}
-                  style={{ marginTop: "3px" }}
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    deleteProduct.mutate(product);
-                  }}
-                />
+                <ConfirmDelete onConfirm={() => deleteProduct.mutate(product)}/>
               </Col>
             </Row>
           </>

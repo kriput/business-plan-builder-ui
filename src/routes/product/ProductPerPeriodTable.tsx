@@ -6,15 +6,20 @@ import {
 import { useEffect, useState } from "react";
 import ProductPerPeriodForm from "./ProductPerPeriodForm";
 import { Product } from "../../domain/Product";
-import { DeleteOutlined } from "@ant-design/icons";
 import { ProductPerPeriod } from "../../domain/ProductPerPeriod";
 import { InputData } from "./ProductContainer";
-import {UseMutateFunction} from "@tanstack/react-query";
+import { UseMutateFunction } from "@tanstack/react-query";
+import ConfirmDelete from "../../base_components/ConfirmDelete";
 
 interface Props {
   product: Product | undefined;
   sellingInCreditRate: number;
-  deleteProductPerPeriod:  UseMutateFunction<Product | undefined, Error, InputData, unknown>
+  deleteProductPerPeriod: UseMutateFunction<
+    Product | undefined,
+    Error,
+    InputData,
+    unknown
+  >;
 }
 
 interface ProductPerPeriodTableDto {
@@ -99,9 +104,8 @@ const ProductPerPeriodTable = (props: Props) => {
       fixed: "right",
       width: "1rem",
       render: (value: ProductPerPeriod) => (
-        <DeleteOutlined
-          className={"delete"}
-          onClick={() =>
+        <ConfirmDelete
+          onConfirm={() =>
             props.deleteProductPerPeriod({
               productPerPeriod: value,
               product: props.product!,
@@ -115,14 +119,15 @@ const ProductPerPeriodTable = (props: Props) => {
 
   return (
     <>
+      <Row justify="center">
       <Badge
-        color="purple"
+        color="cyan"
         count={
           "Materjali/kauba keskmine laovaru vajadus: " +
           getPercents(props.product?.stockReserveRate ?? 0)
         }
       />
-      <br />
+      </Row>
       <br />
       <Table
         scroll={{ x: "max-content" }}

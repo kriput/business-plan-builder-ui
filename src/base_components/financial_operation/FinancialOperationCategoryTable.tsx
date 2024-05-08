@@ -1,13 +1,14 @@
 import {
   InputNumber,
-  message, Modal,
+  message,
+  Modal,
   Popconfirm,
   Table,
   TableProps,
   Tag,
   Tooltip,
 } from "antd";
-import { LockOutlined, DeleteOutlined, StopOutlined } from "@ant-design/icons";
+import { LockOutlined, StopOutlined } from "@ant-design/icons";
 import { FinancialOperation } from "../../domain/FinancialOperation";
 import { useState } from "react";
 import {
@@ -25,7 +26,8 @@ import {
 } from "../../routes/forecast/container/FinancialForecastContainer";
 import { SOCIAL_TAX, UNEMPLOYMENT_INSURANCE_TAX } from "../../index";
 import { FinancialOperationType } from "../../enums/FinancialOperationType";
-import {FINANCIAL_OPERATION_SUBTYPE_INFO} from "../../routes/expense/ExpenseSubtypeInfo";
+import { FINANCIAL_OPERATION_SUBTYPE_INFO } from "../../routes/expense/ExpenseSubtypeInfo";
+import ConfirmDelete from "../ConfirmDelete";
 
 interface Props {
   forecastId: number;
@@ -219,9 +221,8 @@ const FinancialOperationCategoryTable = (props: Props) => {
             !automaticallyGeneratedFields.includes(
                 parseToFinancialOperationSubtype(value.subtype!),
             ) ? (
-                <DeleteOutlined
-                    className={"delete"}
-                    onClick={() => deleteOperation.mutate(value.id ?? 0)}
+                <ConfirmDelete
+                    onConfirm={() => deleteOperation.mutate(value.id ?? 0)}
                 />
             ) : (
                 <>
