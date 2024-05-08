@@ -321,7 +321,7 @@ const ProductPerPeriodForm = (props: Props) => {
             <Form.Item<number>
               label={
                 <>
-                  Tooteid ekspordiks %{" "}
+                  Tooteid ekspordiks %
                   <AdditionalInfo
                     info={
                       <>
