@@ -154,6 +154,9 @@ const IncomeStatementContainer = (props: Props) => {
       </Row>
       <br />
       <Row>
+        <h1>Kokkuvõte</h1>
+      </Row>
+      <Row>
         <Col xs={24} xl={20}>
           <Tag style={{ width: "100%" }} color="blue">
             <h3>Kasum majandustegevusest: </h3>
