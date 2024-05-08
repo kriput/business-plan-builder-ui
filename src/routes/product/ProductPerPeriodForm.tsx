@@ -1,11 +1,15 @@
 import ErrorResult from "../../base_components/ErrorResult";
-import {Button, Form, Input, message, Modal, Row, Select} from "antd";
-import React, { useState } from "react";
 import {
-  useMutation,
-  UseMutationResult,
-  useQueryClient,
-} from "@tanstack/react-query";
+  Button,
+  Form,
+  InputNumber,
+  message,
+  Modal,
+  Select,
+  Space,
+} from "antd";
+import React from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Product } from "../../domain/Product";
 import { ProductService } from "../../services/ProductService";
 import { ProductPerPeriod } from "../../domain/ProductPerPeriod";
@@ -16,11 +20,11 @@ import {
   FinancialOperationSubtype,
   financialOperationSubtypeMapping,
 } from "../../enums/FinancialOperationSubtype";
-import {QuestionCircleOutlined} from "@ant-design/icons";
+import { QuestionCircleOutlined } from "@ant-design/icons";
 
 interface Props {
   sellingInCreditRate: number;
-  product: Product | undefined;
+  product: Product;
   setIsFormOpen: Function;
 }
 
@@ -154,57 +158,37 @@ export const saveIncomesForProduct = async (
   }
 };
 
-
 const ProductPerPeriodForm = (props: Props) => {
   const [form] = Form.useForm();
   const [, contextHolder] = message.useMessage();
   const productService = new ProductService();
   const queryClient = useQueryClient();
   const [modal, context] = Modal.useModal();
-  const [input, setInput] = useState({
-    quantity: 0,
-    forExport: 0,
-    price: 0,
-    costPerItem: 0,
-    year: new Date().getFullYear(),
-  } as ProductPerPeriod);
 
-  const handleChange = (target: EventTarget & HTMLInputElement) => {
-    setInput({ ...input, [target.name]: target.value });
+  const onSubmit = () => {
+    const productPerPeriod = {
+      year: form.getFieldValue("year") ?? new Date().getFullYear(),
+      quantity: form.getFieldValue("quantity"),
+      price: form.getFieldValue("price"),
+      costPerItem: form.getFieldValue("costPerItem"),
+      forExport: (form.getFieldValue("forExport") ?? 0) / 100,
+    } as ProductPerPeriod;
+
+    props.product?.productsPerPeriod.push(productPerPeriod);
+    addProduct.mutate({ product: props.product, productPerPeriod });
   };
 
-  const handleYearChange = (year: number) => {
-    console.log(input)
-    setInput({ ...input, year: year });
-  }
-
-  const handleRateInput = (target: EventTarget & HTMLInputElement) => {
-    if (target.value) {
-      const dividedNumber = parseFloat(target.value) / 100 || 0;
-      setInput({ ...input, [target.name]: dividedNumber });
-    }
-  };
-
-  const handleSubmit = () => {
-    props.product?.productsPerPeriod.push(input);
-    addProduct.mutate(props.product);
-  };
-
-  const reload = () => window.location.reload();
-
-  const addProduct: UseMutationResult<
-    Product | undefined,
-    Error,
-    Product | undefined
-  > = useMutation({
-    mutationFn: async (product: Product | undefined) => {
-      if (!product) {
-        throw Error("Toode pole leitud!");
-      }
-
-      await saveExpensesForProduct(input, product, "add");
+  const addProduct = useMutation({
+    mutationFn: async ({
+      product,
+      productPerPeriod,
+    }: {
+      product: Product;
+      productPerPeriod: ProductPerPeriod;
+    }) => {
+      await saveExpensesForProduct(productPerPeriod, product, "add");
       await saveIncomesForProduct(
-        input,
+        productPerPeriod,
         product,
         props.sellingInCreditRate,
         "add",
@@ -219,17 +203,22 @@ const ProductPerPeriodForm = (props: Props) => {
     },
     onError: async () => {
       await message.error("Viga andmete lisamisel");
-      setTimeout(reload, 2000);
     },
   });
 
   const getOptions = () => {
-    const options = []
-    for (let i = new Date().getFullYear(); i <= new Date().getFullYear() + 10; i++) {
-      options.push({value: i, label: i});
+    const options = [];
+    for (
+      let i = new Date().getFullYear();
+      i <= new Date().getFullYear() + 10;
+      i++
+    ) {
+      if (!props.product.productsPerPeriod.find((p) => p.year === i)) {
+        options.push({ value: i, label: i });
+      }
     }
     return options;
-  }
+  };
 
   return (
     <>
@@ -243,105 +232,160 @@ const ProductPerPeriodForm = (props: Props) => {
         />
       )}
       {!addProduct.isError && (
-        <span>
-          <h4>
-            Lisa andmed aastaks{" "}
-            <Select style={{width: "5rem"}} onChange={handleYearChange} options={getOptions()}/>
-          </h4>
-          <Form name="add_product_per_period" form={form} layout="inline">
-            <Form.Item
+        <>
+          <Form
+            name="add_product_per_period"
+            form={form}
+            onFinish={onSubmit}
+            labelCol={{ span: 12 }}
+          >
+            <Form.Item<string> label={<h4>Lisa andmed aastaks</h4>} name="year">
+              <Select style={{ width: "5rem" }} options={getOptions()} placeholder="Aasta"/>
+            </Form.Item>
+
+            <Form.Item<number>
               label={
                 <div>
                   Müüdud <b>kogus</b>
                 </div>
               }
+              rules={[
+                {
+                  required: true,
+                  message: "Kohustsulik väli",
+                },
+                {
+                  type: "number",
+                  min: 0,
+                  message: "Number ei tohi olla väiksem, kui 0",
+                },
+              ]}
               name="quantity"
             >
-              <Input
-                style={{ width: "8rem", marginBottom: "1rem" }}
-                onChange={(e) => handleChange(e.target)}
+              <InputNumber
+                className="number-input"
                 name="quantity"
                 placeholder="0"
                 type="number"
               />
             </Form.Item>
 
-            <Form.Item
+            <Form.Item<number>
               label={
                 <div>
                   Keskm.ühiku <b>müügihind</b> KM-ta €
                 </div>
               }
+              rules={[
+                {
+                  required: true,
+                  message: "Kohustsulik väli",
+                },
+                {
+                  type: "number",
+                  min: 0,
+                  message: "Number ei tohi olla väiksem, kui 0",
+                },
+              ]}
               name="price"
             >
-              <Input
-                style={{ width: "8rem", marginBottom: "1rem" }}
-                onChange={(e) => handleChange(e.target)}
+              <InputNumber
+                className="number-input"
                 name="price"
-                placeholder="0"
+                placeholder="0 €"
                 type="number"
               />
             </Form.Item>
 
-            <Form.Item
+            <Form.Item<number>
               label={
                 <div>
                   Materjali / kauba <b>kulu</b> ühikule €
                 </div>
               }
+              rules={[
+                {
+                  required: true,
+                  message: "Kohustsulik väli",
+                },
+                {
+                  type: "number",
+                  min: 0,
+                  message: "Number ei tohi olla väiksem, kui 0",
+                },
+              ]}
               name="costPerItem"
             >
-              <Input
-                style={{ width: "8rem", marginBottom: "1rem" }}
-                onChange={(e) => handleChange(e.target)}
+              <InputNumber
+                className="number-input"
                 name="costPerItem"
-                placeholder="0"
+                placeholder="0 €"
                 type="number"
               />
             </Form.Item>
 
-            <Form.Item
-              label="Tooteid ekspordiks %"
+            <Form.Item<number>
+              label={
+                <>
+                  Tooteid ekspordiks %{" "}
+                  <QuestionCircleOutlined
+                    style={{ color: "blue" }}
+                    onClick={() =>
+                      modal.info({
+                        title: "Lisainfo",
+                        content: (
+                          <>
+                            <div>
+                              Mitu % toodetest läheb ekspordiks ehk on müüdud
+                              teistes riikides.
+                            </div>
+                            <br />
+                            <b>Selliste toodete puhul on käibemaksumäär 0%.</b>
+                          </>
+                        ),
+                      })
+                    }
+                  />
+                </>
+              }
               name="forExport"
               rules={[
                 {
-                  message: "Number saab olla vahemikus 0 kuni 100",
+                  type: "number",
                   min: 0,
                   max: 100,
+                  message: "Number saab olla vahemikus 0 kuni 100",
                 },
               ]}
             >
-              <QuestionCircleOutlined style={{color: "blue"}} onClick={() => modal.info({
-                title: 'Lisainfo',
-                content: <><div>Mitu % toodetest läheb ekspordiks ehk on müüdud teistes riikides.</div>
-                  <br/>
-                  <b>Selliste toodete puhul on käibemaksumäär 0%.</b>
-                </>
-              })}/>
-              <Input
-                style={{ width: "8rem", marginBottom: "1rem", marginLeft: "0.5rem" }}
-                onChange={(e) => handleRateInput(e.target)}
+              <InputNumber
+                className="number-input"
                 name="forExport"
-                placeholder="0"
+                placeholder="0%"
                 type="number"
               />
             </Form.Item>
+
+            <Form.Item>
+              <Space>
+                <Button
+                  loading={addProduct.isPending}
+                  htmlType="submit"
+                  type="primary"
+                >
+                  Lisa
+                </Button>
+                <Button
+                  onClick={() => props.setIsFormOpen(false)}
+                  danger
+                  type="dashed"
+                >
+                  Tühista
+                </Button>
+              </Space>
+            </Form.Item>
           </Form>
-          <br />
-          <Row>
-            <Button onClick={handleSubmit} type="primary">
-              Lisa
-            </Button>
-            <Button
-              style={{ marginLeft: "1rem" }}
-              onClick={() => props.setIsFormOpen(false)}
-              danger
-              type="dashed"
-            >
-              Tühista
-            </Button>
-          </Row>
-        </span>
+        </>
       )}
     </>
   );
