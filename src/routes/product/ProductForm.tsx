@@ -71,7 +71,7 @@ const ProductForm = (props: Props) => {
               name="name"
               rules={[{ required: true, message: "Palun sisestage nimi" }]}
             >
-              <Input name="name" />
+              <Input name="name" placeholder="Minu toode"/>
             </Form.Item>
 
             <Form.Item<number>
@@ -90,7 +90,7 @@ const ProductForm = (props: Props) => {
               <InputNumber
                 style={{ width: "5rem" }}
                 name="tax"
-                placeholder="0"
+                placeholder="0%"
                 type="number"
               />
             </Form.Item>
@@ -119,7 +119,7 @@ const ProductForm = (props: Props) => {
                 type="number"
                 style={{ width: "5rem", marginLeft: "0.5rem" }}
                 name="stockReserveRate"
-                placeholder="0"
+                placeholder="0%"
               />
             </Form.Item>
             <Form.Item>

@@ -136,7 +136,7 @@ const ProductPerPeriodTable = (props: Props) => {
         <ProductPerPeriodForm
           sellingInCreditRate={props.sellingInCreditRate}
           setIsFormOpen={setIsFormOpen}
-          product={props.product}
+          product={props.product!}
         />
       )}
       {!isFormOpen && (

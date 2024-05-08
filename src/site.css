@@ -8,3 +8,7 @@
   font-size: large;
   cursor: pointer;
 }
+
+.number-input {
+  width: 8rem;
+}
