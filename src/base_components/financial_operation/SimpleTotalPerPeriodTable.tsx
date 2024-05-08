@@ -1,8 +1,5 @@
 import { Table, TableProps, Tag } from "antd";
-import {
-  getPrice,
-  roundNumberToTwoDecimalPlaces,
-} from "../../routes/forecast/container/FinancialForecastContainer";
+import { getPrice } from "../../routes/forecast/container/FinancialForecastContainer";
 import { FinancialOperation } from "../../domain/FinancialOperation";
 
 interface Props {
@@ -22,7 +19,7 @@ const SimpleTotalPerPeriodTable = (props: Props) => {
       columns?.push({
         title: <Tag color="blue">{i}</Tag>,
         key: i,
-        render: () => getPrice(roundNumberToTwoDecimalPlaces(props.dataProcessor(props.financialOperations, i))),
+        render: () => getPrice(props.dataProcessor(props.financialOperations, i)),
       });
     }
     return columns;

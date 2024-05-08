@@ -2,7 +2,6 @@ import { Table, TableProps, Tag } from "antd";
 import {
   getPercents,
   getPrice,
-  roundNumberToTwoDecimalPlaces,
 } from "../forecast/container/FinancialForecastContainer";
 import { Product } from "../../domain/Product";
 import { ProductPerPeriod } from "../../domain/ProductPerPeriod";
@@ -81,10 +80,10 @@ const ProductOverview = (props: Props) => {
       data.push({
         period: i,
         totalSoldForPeriod: totalSoldForPeriod,
-        forExportInPercent: forExportInEuro === 0 ? 0 : roundNumberToTwoDecimalPlaces(forExportInEuro / totalSoldForPeriod),
+        forExportInPercent: forExportInEuro === 0 ? 0 : forExportInEuro / totalSoldForPeriod,
         forExportInEuro: forExportInEuro,
         soldUnits: soldUnits,
-        averagePrice: soldUnits === 0 ? 0 : roundNumberToTwoDecimalPlaces(totalSoldForPeriod / soldUnits)
+        averagePrice: soldUnits === 0 ? 0 : totalSoldForPeriod / soldUnits
       })
     }
 

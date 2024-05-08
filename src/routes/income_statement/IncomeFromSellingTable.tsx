@@ -4,7 +4,6 @@ import {Table, TableProps, Tag} from "antd";
 import {
   getPercents,
   getPrice,
-  roundNumberToTwoDecimalPlaces
 } from "../forecast/container/FinancialForecastContainer";
 import {getSoldUnits, getTotalForExportInEuro, getTotalSold} from "../product/ProductOverview";
 import {INCOME_FROM_SELLING_LIST} from "./IncomeFromSellingListBuilder";
@@ -49,9 +48,9 @@ const IncomeFromSellingTable = (props: Props) => {
 
       data[0].valuesForRow.push({year: i, value: <b>{getPrice(totalSoldForPeriod)}</b>})
       data[1].valuesForRow.push({year: i, value: `${soldUnits} tk`})
-      data[2].valuesForRow.push({year: i, value: getPrice(soldUnits === 0 ? 0 : roundNumberToTwoDecimalPlaces(totalSoldForPeriod / soldUnits))})
+      data[2].valuesForRow.push({year: i, value: getPrice(soldUnits === 0 ? 0 : totalSoldForPeriod / soldUnits)})
       data[3].valuesForRow.push({year: i, value: getPrice(forExportInEuro)})
-      data[4].valuesForRow.push({year: i, value: getPercents(forExportInEuro === 0 ? 0 : roundNumberToTwoDecimalPlaces(forExportInEuro / totalSoldForPeriod))})
+      data[4].valuesForRow.push({year: i, value: getPercents(forExportInEuro === 0 ? 0 : forExportInEuro / totalSoldForPeriod)})
       data[5].valuesForRow.push({year: i, value: getPrice(otherIncomesForThisPeriod)})
       data[6].valuesForRow.push({year: i, value: <Tag color="green"> <b>{getPrice(totalSoldForPeriod + otherIncomesForThisPeriod)}</b></Tag>});
     }

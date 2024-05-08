@@ -28,11 +28,11 @@ export const getPercents = (num: number) => {
   return `${num * 100} %`;
 };
 
-export const roundNumberToTwoDecimalPlaces = (num: number) =>
+const roundNumberToTwoDecimalPlaces = (num: number) =>
   Math.round((num + Number.EPSILON) * 100) / 100;
 
 export const getPrice = (price: number) => {
-  return `${price} €`;
+  return `${roundNumberToTwoDecimalPlaces(price)} €`;
 };
 
 export const addNewTotalPerPeriod = (financialOperation: FinancialOperation, year: number) => {
