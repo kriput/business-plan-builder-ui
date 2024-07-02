@@ -12,12 +12,12 @@ const AppHeader = () => {
       icon: "📊 ",
       onClick: () => navigate("/forecasts"),
     },
-    {
-      key: 2,
-      label: "Ärimudeli ehitamine",
-      icon: "📚 ",
-      onClick: () => navigate("/model"),
-    },
+    // {
+    //   key: 2,
+    //   label: "Ärimudeli ehitamine",
+    //   icon: "📚 ",
+    //   onClick: () => navigate("/model"),
+    // },
   ]
 
   return (
