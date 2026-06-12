@@ -1,4 +1,4 @@
-import { FinancialOperationSubtype } from "../../enums/FinancialOperationSubtype";
+import { FinancialOperationSubtype } from "@/enums/FinancialOperationSubtype";
 import { JSX } from "react";
 
 export const FINANCIAL_OPERATION_SUBTYPE_INFO = new Map<

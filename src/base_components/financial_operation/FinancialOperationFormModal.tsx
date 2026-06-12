@@ -1,18 +1,18 @@
 import { useState } from "react";
-import { FinancialOperation } from "../../domain/FinancialOperation";
+import { FinancialOperation } from "@/domain/FinancialOperation";
 import {
   FinancialOperationSubtype,
   financialOperationSubtypeMapping,
-} from "../../enums/FinancialOperationSubtype";
+} from "@/enums/FinancialOperationSubtype.ts";
 import { Alert, Button, Form, Modal, Select, Tooltip } from "antd";
 import { useForm } from "antd/es/form/Form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { FinancialOperationService } from "../../services/FinancialOperationService";
+import { FinancialOperationService } from "@/services/FinancialOperationService";
 import ErrorResult from "../ErrorResult";
 import { parseToFinancialOperationSubtype } from "./FinancialOperationOverview";
-import { FinancialOperationType } from "../../enums/FinancialOperationType";
+import { FinancialOperationType } from "@/enums/FinancialOperationType";
 import { CheckOutlined, PlusOutlined } from "@ant-design/icons";
-import {updateAllData} from "../../routes/forecast/container/FinancialForecastContainer";
+import { updateAllData } from "../../routes/forecast/container/FinancialForecastContainer";
 
 interface Props {
   forecastId: number;

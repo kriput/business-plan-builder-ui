@@ -9,14 +9,14 @@ import {
   Tooltip,
 } from "antd";
 import { LockOutlined, StopOutlined } from "@ant-design/icons";
-import { FinancialOperation } from "../../domain/FinancialOperation";
+import { FinancialOperation } from "@/domain/FinancialOperation";
 import { useState } from "react";
 import {
   FinancialOperationSubtype,
   financialOperationSubtypeMapping,
-} from "../../enums/FinancialOperationSubtype";
+} from "@/enums/FinancialOperationSubtype.ts";
 import { parseToFinancialOperationSubtype } from "./FinancialOperationOverview";
-import { FinancialOperationService } from "../../services/FinancialOperationService";
+import { FinancialOperationService } from "@/services/FinancialOperationService";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   addNewTotalPerPeriod,
@@ -24,8 +24,8 @@ import {
   getPrice,
   updateAllData,
 } from "../../routes/forecast/container/FinancialForecastContainer";
-import { SOCIAL_TAX, UNEMPLOYMENT_INSURANCE_TAX } from "../../index";
-import { FinancialOperationType } from "../../enums/FinancialOperationType";
+import { SOCIAL_TAX, UNEMPLOYMENT_INSURANCE_TAX } from "../../main.tsx";
+import { FinancialOperationType } from "@/enums/FinancialOperationType";
 import { FINANCIAL_OPERATION_SUBTYPE_INFO } from "../../routes/expense/ExpenseSubtypeInfo";
 import ConfirmDelete from "../ConfirmDelete";
 
@@ -155,11 +155,19 @@ const FinancialOperationCategoryTable = (props: Props) => {
                 description="Neid andmeid käsitsi muuta ei saa"
                 okText="Sulge"
                 cancelText="Kust andmed tulevad?"
-                cancelButtonProps={{disabled: !FINANCIAL_OPERATION_SUBTYPE_INFO.has(parseToFinancialOperationSubtype(value.subtype ?? ""))}}
-                onCancel={() => modal.info({
-                  title: 'Lisainfo',
-                  content: FINANCIAL_OPERATION_SUBTYPE_INFO.get(parseToFinancialOperationSubtype(value.subtype ?? ""))
-                })}
+                cancelButtonProps={{
+                  disabled: !FINANCIAL_OPERATION_SUBTYPE_INFO.has(
+                    parseToFinancialOperationSubtype(value.subtype ?? ""),
+                  ),
+                }}
+                onCancel={() =>
+                  modal.info({
+                    title: "Lisainfo",
+                    content: FINANCIAL_OPERATION_SUBTYPE_INFO.get(
+                      parseToFinancialOperationSubtype(value.subtype ?? ""),
+                    ),
+                  })
+                }
               >
                 <span style={{ cursor: "pointer" }}>
                   {getPrice(
@@ -218,19 +226,19 @@ const FinancialOperationCategoryTable = (props: Props) => {
         fixed: "right",
         width: "1rem",
         render: (value: FinancialOperation) =>
-            !automaticallyGeneratedFields.includes(
-                parseToFinancialOperationSubtype(value.subtype!),
-            ) ? (
-                <ConfirmDelete
-                    onConfirm={() => deleteOperation.mutate(value.id ?? 0)}
-                />
-            ) : (
-                <>
-                  <Tooltip
-                      title="Automaatselt genereeritud andmed ei saa kustutada käsitsi"><StopOutlined
-                      style={{color: "green"}}/></Tooltip>
-                </>
-            ),
+          !automaticallyGeneratedFields.includes(
+            parseToFinancialOperationSubtype(value.subtype!),
+          ) ? (
+            <ConfirmDelete
+              onConfirm={() => deleteOperation.mutate(value.id ?? 0)}
+            />
+          ) : (
+            <>
+              <Tooltip title="Automaatselt genereeritud andmed ei saa kustutada käsitsi">
+                <StopOutlined style={{ color: "green" }} />
+              </Tooltip>
+            </>
+          ),
       });
     }
     return tableProps;

@@ -1,9 +1,9 @@
 import { QuestionCircleOutlined } from "@ant-design/icons";
-import React, {JSX} from "react";
+import React, { JSX } from "react";
 import useModal from "antd/es/modal/useModal";
 
 interface Props {
-  info: string | JSX.Element
+  info: string | JSX.Element;
 }
 
 const AdditionalInfo = (props: Props) => {
@@ -17,8 +17,7 @@ const AdditionalInfo = (props: Props) => {
         onClick={() =>
           modal.info({
             title: "Lisainfo",
-            content:
-              props.info,
+            content: props.info,
           })
         }
       />

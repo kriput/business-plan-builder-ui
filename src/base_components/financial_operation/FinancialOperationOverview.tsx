@@ -1,13 +1,21 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import {Button, Col, Collapse, CollapseProps, Row, Space, Switch, Tag,} from "antd";
-import ButtonGroup from "antd/es/button/button-group";
-import {FinancialOperationSubtype} from "../../enums/FinancialOperationSubtype";
-import {useEffect, useState} from "react";
+import {
+  Button,
+  Col,
+  Collapse,
+  CollapseProps,
+  Row,
+  Space,
+  Switch,
+  Tag,
+} from "antd";
+import { FinancialOperationSubtype } from "@/enums/FinancialOperationSubtype";
+import { useEffect, useState } from "react";
 import FinancialOperationCategoryTable from "./FinancialOperationCategoryTable";
-import {FinancialOperation} from "../../domain/FinancialOperation";
-import {FinancialOperationCategory} from "../../dto/FinancialOperationCategory";
+import { FinancialOperation } from "@/domain/FinancialOperation";
+import { FinancialOperationCategory } from "@/dto/FinancialOperationCategory";
 import FinancialOperationFormModal from "./FinancialOperationFormModal";
-import {FinancialOperationType} from "../../enums/FinancialOperationType";
+import { FinancialOperationType } from "@/enums/FinancialOperationType";
+import ButtonGroup from "antd/lib/button/ButtonGroup";
 
 interface Props {
   forecastId: number;
@@ -54,14 +62,11 @@ const FinancialOperationOverview = (props: Props) => {
     );
   };
 
-  useEffect(
-    () => {
-      if (props.printButtonPressed !== undefined) {
-        setOpenPanels(props.financialOperationCategoryList.map((ec) => ec.name))
-      }
-    },
-    [props.printButtonPressed],
-  );
+  useEffect(() => {
+    if (props.printButtonPressed !== undefined) {
+      setOpenPanels(props.financialOperationCategoryList.map((ec) => ec.name));
+    }
+  }, [props.printButtonPressed]);
 
   const items: CollapseProps["items"] = filterEmptyCategories().map(
     (financialOperationCategory) => {
